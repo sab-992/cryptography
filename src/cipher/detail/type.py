@@ -8,7 +8,7 @@ type Nonce = bytes
 class CipherDict(TypedDict):
     cipher: Cipher
     nonce: Nonce
-    salt: Salt
+    salt: Salt # Used to make an encryption key by combining it with user's password
 
 def cipher_dict_to_str_dict(cd: CipherDict) -> dict[str, str]:
     return { k: v.hex() for k, v in cd.items() }
