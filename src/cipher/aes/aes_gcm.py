@@ -10,7 +10,7 @@ SALT_SIZE: int = 16
 NONCE_SIZE: int = 12
 KDF_ITERATIONS: int = 100_000
 
-class AES(Algorithm):
+class AESGCM(Algorithm):
     def __init__(self, strategy: FileStrategy = FileStrategyBuilder.build(FileStrategy_en.JSON)):
         super().__init__(strategy)
 
