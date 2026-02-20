@@ -14,7 +14,7 @@ class JsonFS(FileStrategy):
         json_obj: dict = json.loads(FileSystem.read(path))
 
         if not is_cipher_dict(json_obj):
-            raise Exception(Logger.log(message="Cipher JSON object ill-formed !", level=Level_en.ERROR))
+            raise Exception(Logger.log(message="Cipher JSON object ill-formed", level=Level_en.ERROR))
 
         return str_dict_to_cipher_dict(json_obj)
 

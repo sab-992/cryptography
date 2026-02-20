@@ -17,4 +17,4 @@ class FileStrategyBuilder:
             case FileStrategy_en.JSON:
                 return JsonFS()
             case _:
-                raise Exception(Logger.log(message=f"Strategy: {strategy} does not exist !", level=Level_en.ERROR))
+                raise Exception(Logger.log(message=f"Strategy: {strategy} does not exist", level=Level_en.ERROR))
