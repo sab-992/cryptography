@@ -1,44 +1,25 @@
-from src.utils.logger import Logger, Level_en
-from tkinter import Misc
-from tkinter.ttk import Combobox
+from PySide6.QtWidgets import QComboBox
+from src.gui.detail.widget_builder import WidgetBuilder
 from typing import Self
 
-class ComboBoxBuilder():
+
+class ComboBox(WidgetBuilder):
     def __init__(self):
-        self.__parent: Misc = None
-        self.__width: int = -1
-        self.__height: int = -1
-        self.__values: tuple[str] = None
+        super().__init__(QComboBox())
+        self.__values: list[str] = []
 
-    def build(self):
-        if not self.__parent:
-            raise Exception(Logger.log(message=f"{__class__.__name__} - No parent given", level=Level_en.ERROR))
-        
-        if not self.__values or\
-           len(self.__values) <= 0:
-            raise Exception(Logger.log(message=f"{__class__.__name__} - No values given", level=Level_en.ERROR))
-    
-        if self.__width < 0 or \
-           self.__height < 0:
-            raise Exception(Logger.log(message=f"{__class__.__name__}: Missing dimensions", level=Level_en.ERROR))
-        
-        combo_box: Combobox = Combobox(self.__parent, height=self.__height, width=self.__width)
+    def get(self) -> QComboBox:
+        if len(self.__values) <= 0:
+            self.error("No values given")
 
-        combo_box["values"] = self.__values
-        return combo_box
+        if not isinstance(self.widget, QComboBox):
+            self.error("Cannot create components other than QComboBox")
 
-    def set_height(self, height: int) -> Self:
-        self.__height = height
-        return self
-    
-    def set_parent(self, parent: Misc) -> Self:
-        self.__parent = parent
-        return self
-    
-    def set_values(self, values: tuple[str]) -> Self:
+        for value in self.__values:
+            self.widget.addItem(value)
+
+        return self.widget
+
+    def set_values(self, values: list[str]) -> Self:
         self.__values = values
-        return self
-
-    def set_width(self, width: int) -> Self:
-        self.__width = width
         return self
