@@ -1,12 +1,10 @@
 import sys
 from PySide6 import QtWidgets
 from src.utils.logger import Logger, Level_en
-from typing import Literal, Self
+from src.gui.detail.ui_component import UIComponent, QtComponent
 
 WINDOW_NAME: str = "Cryptography"
 WINDOW_SIZE: tuple[int] = (1920, 1080)
-
-WidgetType = Literal["QWidget", "QLayout"]
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -19,12 +17,12 @@ class MainWindow(QtWidgets.QMainWindow):
         Logger.log(message="Main window ready", level=Level_en.INFO, to_std_out=True)
 
     # X and Y starts from the top left corner.
-    def add_layout(self, component: QtWidgets.QWidget, x: int, y: int):
-        self.__ui_components.append((component, x, y, "QLayout"))
+    def add_layout(self, qt_component: QtComponent, row: int, col: int, row_span: int = 1, col_span: int = 1):
+        self.__ui_components.append(UIComponent(qt_component, row, col, row_span, col_span, "QLayout"))
 
     # X and Y starts from the top left corner.
-    def add_widget(self, component: QtWidgets.QWidget, x: int, y: int):
-        self.__ui_components.append((component, x, y, "QWidget"))
+    def add_widget(self, qt_component: QtComponent, row: int, col: int, row_span: int = 1, col_span: int = 1):
+        self.__ui_components.append(UIComponent(qt_component, row, col, row_span, col_span, "QWidget"))
 
     def create_ui_components(self):
         pass
@@ -37,21 +35,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self.create_ui_components()
 
         # Add components to the main layout.
-        for component_info in self.__ui_components:
-            match component_info[3]:
+        for component in self.__ui_components:
+            match component.type:
                 case "QWidget":
-                    main_layout_grid.addWidget(component_info[0], component_info[1], component_info[2])
+                    main_layout_grid.addWidget(*component.get_tuple())
                 case "QLayout":
-                    main_layout_grid.addLayout(component_info[0], component_info[1], component_info[2])
+                    main_layout_grid.addLayout(*component.get_tuple())
                 case _:
-                    raise Exception(Logger.log(message=f"Component type is not handled", level=Level_en.ERROR))
+                    raise Exception(Logger.log(message=f"Component type: '{component.type}' is not handled", level=Level_en.ERROR))
 
     def set_window_settings(self) -> None:
         self.setWindowTitle(WINDOW_NAME)
         self.resize(*WINDOW_SIZE)
         self.setCentralWidget(QtWidgets.QWidget())
-        self.__ui_components: list[tuple[QtWidgets.QWidget, int, int, WidgetType]] = []
+        self.__ui_components: list[UIComponent] = []
 
-    def start(self) -> Self:
+    def start(self) -> None:
         self.show()
         sys.exit(self.__app.exec())
