@@ -73,6 +73,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show()
         sys.exit(self.__app.exec())
 
+    # TODO: Separate all section functions into their own classes.
     def get_action_section(self) -> QtWidgets.QWidget:
         encrypt_decrypt_push_button_builder = (PushButtonBuilder().set_width(ACTION_BUTTON_SIZE)
                                                                   .set_height(ACTION_BUTTON_SIZE)
