@@ -42,7 +42,7 @@ class MainWindow(QtWidgets.QMainWindow):
             elif isinstance(component.qt_component, QtWidgets.QLayout):
                 main_layout_grid.addLayout(*component.get_tuple())
             else:
-                raise Exception(Logger.log(message=f"Component type: '{component.type}' is not handled", level=Level_en.ERROR))
+                raise Exception(Logger.log(message=f"Component type: '{type(component.qt_component)}' is not handled", level=Level_en.ERROR))
 
     def set_window_settings(self) -> None:
         self.setWindowTitle(WINDOW_NAME)
