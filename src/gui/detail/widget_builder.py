@@ -11,24 +11,24 @@ class WidgetBuilder(ABC):
     def __init__(self, cls: Type[T]):
         if not issubclass(cls, QWidget):
             self.error(f"Type {cls.__name__} is not a Qt widget")
-        self.width: int = -1
-        self.height: int = -1
+        self.width: int = None
+        self.height: int = None
         self.font: QFont = None
 
     def build(self) -> T:
-        if self.width <= 0 or\
-           self.height <= 0:
-            self.error(f"Missing dimensions ! w={self.width}, h={self.height}")
-
         widget: QWidget = self.initialize_instance()
+
+        if self.width:
+            widget.setFixedWidth(self.width)
+
+        if self.height:
+            widget.setFixedHeight(self.height)
 
         if not self.font:
             default_font = widget.font()
             self.set_font(default_font.family(), default_font.pointSize())
 
         widget.setFont(self.font)
-        widget.setFixedWidth(self.width)
-        widget.setFixedHeight(self.height)
 
         return widget
 
