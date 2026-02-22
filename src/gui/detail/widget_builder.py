@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from PySide6.QtCore import QMargins
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QWidget
 from src.utils.logger import Logger, Level_en
@@ -10,9 +11,9 @@ class WidgetBuilder(ABC):
     def __init__(self, cls: Type[T]):
         if not issubclass(cls, QWidget):
             self.error(f"Type {cls.__name__} is not a Qt widget")
-        self.width = -1
-        self.height = -1
-        self.font = None
+        self.width: int = -1
+        self.height: int = -1
+        self.font: QFont = None
 
     def build(self) -> T:
         if self.width <= 0 or\
