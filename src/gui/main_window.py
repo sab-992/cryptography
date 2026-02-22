@@ -37,6 +37,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Add components to the main layout.
         for component in self.__ui_components:
+            params = component.get_tuple()
+            if component.alignment:
+                params += (component.alignment,)
+
             if isinstance(component.qt_component, QtWidgets.QWidget):
                 main_layout_grid.addWidget(*component.get_tuple())
             elif isinstance(component.qt_component, QtWidgets.QLayout):
