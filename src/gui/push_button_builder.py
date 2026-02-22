@@ -23,7 +23,6 @@ class PushButtonBuilder(WidgetBuilder):
         if has_text and has_image_path:
             self.error("Cannot have text and icon at the same time")
 
-
         if has_image_path:
             if not self.__image_size:
                 self.error("No size given for the icon")
