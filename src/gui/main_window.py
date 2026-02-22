@@ -1,11 +1,11 @@
 import sys
 from PySide6 import QtCore, QtWidgets
-from src.gui.combo_box_builder import ComboBoxBuilder
+from src.gui.builder.combo_box_builder import ComboBoxBuilder
+from src.gui.builder.label_builder import LabelBuilder
+from src.gui.builder.line_edit_builder import LineEditBuilder
+from src.gui.builder.push_button_builder import PushButtonBuilder
+from src.gui.builder.text_edit_builder import TextEditBuilder
 from src.gui.detail.ui_component import QtComponent, UIComponent
-from src.gui.label_builder import LabelBuilder
-from src.gui.line_edit_builder import LineEditBuilder
-from src.gui.push_button_builder import PushButtonBuilder
-from src.gui.text_edit_builder import TextEditBuilder
 from src.utils.logger import Logger, Level_en
 
 # Main window settings
