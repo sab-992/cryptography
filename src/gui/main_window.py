@@ -3,6 +3,7 @@ from PySide6 import QtWidgets
 from src.utils.logger import Logger, Level_en
 from src.gui.detail.ui_component import UIComponent, QtComponent
 
+
 WINDOW_NAME: str = "Cryptography"
 WINDOW_SIZE: tuple[int] = (1920, 1080)
 
@@ -16,11 +17,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         Logger.log(message="Main window ready", level=Level_en.INFO, to_std_out=True)
 
-    # X and Y starts from the top left corner.
+    # Row 0 and column 0 starts from the top left corner.
     def add_layout(self, qt_component: QtComponent, row: int, col: int, row_span: int = 1, col_span: int = 1):
         self.__ui_components.append(UIComponent(qt_component, row, col, row_span, col_span, "QLayout"))
 
-    # X and Y starts from the top left corner.
+    # Row 0 and column 0 starts from the top left corner.
     def add_widget(self, qt_component: QtComponent, row: int, col: int, row_span: int = 1, col_span: int = 1):
         self.__ui_components.append(UIComponent(qt_component, row, col, row_span, col_span, "QWidget"))
 
