@@ -7,4 +7,4 @@ class LineEditBuilder(WidgetBuilder):
         super().__init__(QLineEdit)
 
     def initialize_instance(self) -> QLineEdit:
-        return self.widget_type()
+        return QLineEdit()

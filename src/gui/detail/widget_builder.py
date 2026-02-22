@@ -9,8 +9,6 @@ class WidgetBuilder(ABC):
     def __init__(self, cls: Type[T]):
         if not issubclass(cls, QWidget):
             self.error(f"Type {cls.__name__} is not a Qt widget")
-
-        self.widget_type = cls
         self.width = -1
         self.height = -1
 
@@ -19,10 +17,10 @@ class WidgetBuilder(ABC):
            self.height <= 0:
             self.error(f"Missing dimensions ! w={self.width}, h={self.height}")
 
-        widget = self.initialize_instance()
-
+        widget: QWidget = self.initialize_instance()
         widget.setFixedWidth(self.width)
         widget.setFixedHeight(self.height)
+
         return widget
 
     @abstractmethod

@@ -12,7 +12,7 @@ class ComboBoxBuilder(WidgetBuilder):
         if len(self.__values) <= 0:
             self.error("No values given")
 
-        widget = self.widget_type()
+        widget = QComboBox()
 
         for value in self.__values:
             widget.addItem(value)

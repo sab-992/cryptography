@@ -7,4 +7,4 @@ class TextEditBuilder(WidgetBuilder):
         super().__init__(QTextEdit)
 
     def initialize_instance(self) -> QTextEdit:
-        return self.widget_type()
+        return QTextEdit()
