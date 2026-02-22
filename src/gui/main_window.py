@@ -17,13 +17,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
         Logger.log(message="Main window ready", level=Level_en.INFO, to_std_out=True)
 
-    def add_component(self, qt_component: QtComponent, row: int, col: int, row_span: int = 1, col_span: int = 1):
+    def add_component(self, qt_component: QtComponent, row: int, col: int, row_span: int = 1, col_span: int = 1, alignment: QtCore.Qt.AlignmentFlag = None):
         """
         row: starts at 0 (left side).
 
         col: starts at 0 (top).
         """
-        self.__ui_components.append(UIComponent(qt_component, row, col, row_span, col_span))
+        self.__ui_components.append(UIComponent(qt_component, row, col, row_span, col_span, alignment))
 
     def create_ui_components(self):
         pass
