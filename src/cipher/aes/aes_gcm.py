@@ -3,7 +3,7 @@ import hashlib
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from src.cipher.detail.algorithm import Algorithm
 from src.cipher.detail.type import CipherDict, Salt, Nonce
-from src.utils.file_strategy.file_strategy_builder import FileStrategy, FileStrategy_en, FileStrategyBuilder
+from src.utils.file_strategy.file_strategy_factory import FileStrategy, FileStrategy_en, FileStrategyFactory
 
 
 SALT_SIZE: int = 16
@@ -11,7 +11,7 @@ NONCE_SIZE: int = 12
 KDF_ITERATIONS: int = 100_000
 
 class AESGCM(Algorithm):
-    def __init__(self, strategy: FileStrategy = FileStrategyBuilder.build(FileStrategy_en.JSON)):
+    def __init__(self, strategy: FileStrategy = FileStrategyFactory.get(FileStrategy_en.JSON)):
         super().__init__(strategy)
 
     def decrypt(self, password: str, cipher_dict: CipherDict) -> str:

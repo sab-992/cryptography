@@ -7,12 +7,12 @@ from src.utils.logger import Logger, Level_en
 class FileStrategy_en(Enum):
     JSON = "JSON"
 
-class FileStrategyBuilder:
+class FileStrategyFactory:
     def __init__(self):
         pass
 
     @staticmethod
-    def build(strategy: FileStrategy_en) -> FileStrategy:
+    def get(strategy: FileStrategy_en) -> FileStrategy:
         match strategy:
             case FileStrategy_en.JSON:
                 return JsonFS()
