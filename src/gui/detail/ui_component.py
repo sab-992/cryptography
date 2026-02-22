@@ -1,11 +1,8 @@
 from dataclasses import dataclass
 from PySide6 import QtWidgets
-from typing import Literal
 
 
-WidgetType = Literal["QWidget", "QLayout"]
 type QtComponent = QtWidgets.QWidget | QtWidgets.QLayout
-
 
 @dataclass
 class UIComponent:
@@ -14,8 +11,6 @@ class UIComponent:
     col: int
     row_span: int
     col_span: int
-    type: WidgetType
 
-    # Does NOT return the widget type.
     def get_tuple(self) -> tuple[QtComponent, int, int, int, int]:
         return (self.qt_component, self.row, self.col, self.row_span, self.col_span)
