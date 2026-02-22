@@ -1,18 +1,40 @@
+from abc import ABC, abstractmethod
 from PySide6.QtWidgets import QWidget
 from src.utils.logger import Logger, Level_en
-from typing import Self
+from typing import Self, Type, TypeVar
 
+T = TypeVar('T')
 
-class WidgetBuilder():
-    def __init__(self, widget: QWidget):
-        self.widget: QWidget = widget
+class WidgetBuilder(ABC):
+    def __init__(self, cls: Type[T]):
+        if not issubclass(cls, QWidget):
+            self.error(f"Type {cls.__name__} is not a Qt widget")
+
+        self.widget_type = cls
+        self.width = -1
+        self.height = -1
+
+    def build(self) -> T:
+        if self.width <= 0 or\
+           self.height <= 0:
+            self.error(f"Missing dimensions ! w={self.width}, h={self.height}")
+
+        widget = self.initialize_instance()
+
+        widget.setFixedWidth(self.width)
+        widget.setFixedHeight(self.height)
+        return widget
+
+    @abstractmethod
+    def initialize_instance(self) -> T:
+        pass
 
     def set_height(self, height: int) -> Self:
-        self.widget.setFixedHeight(height)
+        self.height = height
         return self
 
     def set_width(self, width: int) -> Self:
-        self.widget.setFixedWidth(width)
+        self.width = width
         return self
 
     def error(self, reason: str) -> None:
