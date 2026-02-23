@@ -11,13 +11,15 @@ class ManagementComponent(Component):
         self.initialize_ui()
 
     def initialize_ui(self) -> None:
+        BUTTON_SPACING = 5
+
         combo_box_builder = (ComboBoxBuilder().set_width(COMBO_BOX_DEFAULT_WIDTH)
                                               .set_height(DIMENSION_UNIT_SIZE // 1.5))
         push_button_builder = PushButtonBuilder().set_height(BUTTON_DEFAULT_HEIGHT)
 
         management_box = QtWidgets.QHBoxLayout(self)
-        management_box.setAlignment(QtCore.Qt.AlignRight)
-        management_box.setSpacing(5)
+        management_box.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
+        management_box.setSpacing(BUTTON_SPACING)
         management_box.addWidget(combo_box_builder.set_values(["File strategy"]).build())
         management_box.addWidget(push_button_builder.set_text("Upload").set_width(BUTTON_DEFAULT_WIDTH).build())
         management_box.addWidget(push_button_builder.set_text("Save").set_width(BUTTON_DEFAULT_WIDTH).build())
