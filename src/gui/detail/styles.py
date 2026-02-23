@@ -1,4 +1,3 @@
-
 def get_button_hover_effect(hex_color: str) -> str:
     ALPHA_VALUE = 30
     HEX_BASE = 16
