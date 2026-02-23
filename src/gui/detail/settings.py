@@ -2,7 +2,11 @@
 WINDOW_NAME: str = "Cryptography"
 WINDOW_SIZE: tuple[int] = (1920, 1080)
 
-# UI
+
+# Fonts
+DEFAULT_FONT_SIZE: int = 12
+
+# UI components
 DIMENSION_UNIT_SIZE: int = 50
 ACTION_BUTTON_SIZE: int = 100
 BUTTON_DEFAULT_WIDTH: int = DIMENSION_UNIT_SIZE * 3

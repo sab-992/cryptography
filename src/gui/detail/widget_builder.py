@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
-from PySide6.QtCore import QMargins
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QWidget
 from src.utils.logger import Logger, Level_en
+from src.gui.detail.settings import DEFAULT_FONT_SIZE
 from typing import Self, Type, TypeVar
 
 T = TypeVar('T')
@@ -26,7 +26,7 @@ class WidgetBuilder(ABC):
 
         if not self.font:
             default_font = widget.font()
-            self.set_font(default_font.family(), default_font.pointSize())
+            self.set_font(default_font.family(), DEFAULT_FONT_SIZE)
 
         widget.setFont(self.font)
 
