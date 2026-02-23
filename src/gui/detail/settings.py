@@ -4,6 +4,7 @@ WINDOW_SIZE: tuple[int] = (1920, 1080)
 
 
 # Fonts
+DEFAULT_FONT_FAMILY: str = "Inter"
 DEFAULT_FONT_SIZE: int = 12
 
 # UI components
