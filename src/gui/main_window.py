@@ -28,14 +28,10 @@ class MainWindow(QtWidgets.QMainWindow):
                                        PlainComponent()]
 
         for component in components:
-            parameters = component.get_tuple()
-            if component.alignment:
-                parameters += (component.alignment,)
-
             if not isinstance(component, QtWidgets.QWidget):
                 raise Exception(Logger.log(message=f"Component type: '{type(component)}' is not handled", level=Level_en.ERROR))
 
-            main_layout_grid.addWidget(*parameters)
+            main_layout_grid.addWidget(*component)
 
     def set_window_settings(self) -> None:
         self.setWindowTitle(WINDOW_NAME)
