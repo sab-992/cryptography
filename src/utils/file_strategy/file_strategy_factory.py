@@ -1,11 +1,16 @@
+from dataclasses import dataclass
 from enum import Enum
 from src.utils.file_strategy.file_strategy import FileStrategy
 from src.utils.file_strategy.json import JsonFS
-from src.utils.logger import Logger, Level_en
 
+
+@dataclass
+class FileStrategyInfo():
+    name: str
+    obj_type: FileStrategy
 
 class FileStrategy_en(Enum):
-    JSON = "JSON"
+    JSON = FileStrategyInfo("JSON", JsonFS)
 
 class FileStrategyFactory:
     def __init__(self):
@@ -13,8 +18,4 @@ class FileStrategyFactory:
 
     @staticmethod
     def get(strategy: FileStrategy_en) -> FileStrategy:
-        match strategy:
-            case FileStrategy_en.JSON:
-                return JsonFS()
-            case _:
-                raise Exception(Logger.log(message=f"Strategy: {strategy} does not exist", level=Level_en.ERROR))
+        return strategy.value.obj_type()

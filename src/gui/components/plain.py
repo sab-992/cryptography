@@ -1,4 +1,5 @@
 from PySide6 import QtWidgets
+from src.cipher.cipher_algorithm_factory import CipherAlgorithm_en
 from src.gui.builder.combo_box_builder import ComboBoxBuilder
 from src.gui.builder.text_edit_builder import TextEditBuilder
 from src.gui.detail.component import Component
@@ -19,4 +20,7 @@ class PlainComponent(Component):
 
         plain_box = QtWidgets.QVBoxLayout(self)
         plain_box.addWidget(text_edit_builder.build())
-        plain_box.addWidget(combo_box_builder.set_values(["Cipher Algorithm"]).build())
+        plain_box.addWidget(combo_box_builder.set_values(self.get_cipher_algorithms()).build())
+
+    def get_cipher_algorithms(self):
+        return [f"{cipher_alg.value.name}, mode: {cipher_alg.value.mode}" for cipher_alg in CipherAlgorithm_en]

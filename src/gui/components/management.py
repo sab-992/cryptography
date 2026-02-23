@@ -3,6 +3,7 @@ from src.gui.builder.combo_box_builder import ComboBoxBuilder
 from src.gui.builder.push_button_builder import PushButtonBuilder
 from src.gui.detail.component import Component
 from src.gui.detail.settings import BUTTON_DEFAULT_HEIGHT, BUTTON_DEFAULT_WIDTH, COMBO_BOX_DEFAULT_WIDTH, DIMENSION_UNIT_SIZE
+from src.utils.file_strategy.file_strategy_factory import FileStrategy_en
 
 
 class ManagementComponent(Component):
@@ -20,6 +21,9 @@ class ManagementComponent(Component):
         management_box = QtWidgets.QHBoxLayout(self)
         management_box.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         management_box.setSpacing(BUTTON_SPACING)
-        management_box.addWidget(combo_box_builder.set_values(["File strategy"]).build())
+        management_box.addWidget(combo_box_builder.set_values(self.get_file_strategies()).build())
         management_box.addWidget(push_button_builder.set_text("Upload").set_width(BUTTON_DEFAULT_WIDTH).build())
         management_box.addWidget(push_button_builder.set_text("Save").set_width(BUTTON_DEFAULT_WIDTH).build())
+
+    def get_file_strategies(self) -> list[str]:
+        return [strategy.value.name for strategy in FileStrategy_en]          
