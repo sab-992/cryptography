@@ -23,8 +23,8 @@ class ManagementComponent(Component):
         management_box.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         management_box.setSpacing(SPACING)
         management_box.addWidget(combo_box_builder.set_values(self.get_file_strategies()).build())
-        management_box.addWidget(push_button_builder.set_text("Upload").set_width(BUTTON_DEFAULT_WIDTH).set_style(f"QPushButton {"{ border: none; background: #F44336; border-radius: 10px; padding: 8px; }"}{ get_button_hover_effect("#F44336") }").build())
-        management_box.addWidget(push_button_builder.set_text("Save").set_width(BUTTON_DEFAULT_WIDTH).set_style(f"QPushButton {"{ border: none; background: #2196F3; border-radius: 10px; padding: 8px; }"}{ get_button_hover_effect("#2196F3") }").build())
+        management_box.addWidget(push_button_builder.set_text("Upload").set_width(BUTTON_DEFAULT_WIDTH).set_style(f"QPushButton {"{ border: none; background: #F44336; border-radius: 10px; padding: 8px; }"}{get_button_hover_effect("#F44336")}").build())
+        management_box.addWidget(push_button_builder.set_text("Save").set_width(BUTTON_DEFAULT_WIDTH).set_style(f"QPushButton {"{ border: none; background: #2196F3; border-radius: 10px; padding: 8px; }"}{get_button_hover_effect("#2196F3")}").build())
 
     def get_file_strategies(self) -> list[str]:
         return [strategy.value.name for strategy in FileStrategy_en]          
