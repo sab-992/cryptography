@@ -3,7 +3,7 @@ from enum import Enum
 from src.utils.file_strategy.file_strategy import FileStrategy
 from src.utils.file_strategy.json import JsonFS
 from src.utils.logger import Logger, Level_en
-from typing import Any
+from typing import Any, Type
 
 
 @dataclass
@@ -15,16 +15,16 @@ class FileStrategy_en(Enum):
     JSON = FileStrategyInfo("JSON", JsonFS)
 
 class FileStrategyFactory:
-    def __init__(self):
-        pass
+    factory: dict[str, Type[FileStrategy]] = { fs_info.value.name: fs_info.value.obj_type for fs_info in FileStrategy_en}
 
-    @staticmethod
-    def get(strategy: Any) -> FileStrategy:
+    @classmethod
+    def get(cls, strategy: Any) -> FileStrategy:
         if isinstance(strategy, FileStrategy_en):
             return strategy.value.obj_type()
 
-        match strategy:
-            case FileStrategy_en.JSON.name:
-                return FileStrategy_en.JSON.value.obj_type()
-            case _:
-                raise Exception(Logger.log(message=f"File strategy {strategy} is not handled", level=Level_en.ERROR))
+        obj_type = cls.factory.get(strategy, None)
+
+        if not obj_type:
+            raise Exception(Logger.log(message=f"File strategy {strategy} is not handled", level=Level_en.ERROR))
+        
+        return obj_type()
