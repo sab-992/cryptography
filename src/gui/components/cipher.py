@@ -1,15 +1,36 @@
 from PySide6 import QtWidgets
+from PySide6.QtCore import Slot
+from src.cipher.detail.type import CipherDict, PlainDict
 from src.gui.builder.label_builder import LabelBuilder
 from src.gui.builder.line_edit_builder import LineEditBuilder
 from src.gui.builder.text_edit_builder import TextEditBuilder
 from src.gui.detail.component import Component
 from src.gui.detail.settings import DIMENSION_UNIT_SIZE, LABEL_DEFAULT_SIZE, MAIN_COMPONENT_DEFAULT_WIDTH, TEXT_EDIT_DEFAULT_HEIGHT
+from src.gui.signals.action import ActionSignalsSingleton
+from src.gui.signals.cipher import CipherSignalsSingleton
+from src.gui.signals.management import ManagementSignalsSingleton
+from src.gui.signals.plain import PlainSignalsSingleton
 
 
 class CipherComponent(Component):
     def __init__(self):
+        self.action_signals_s = ActionSignalsSingleton()
+        self.cipher_signals_s = CipherSignalsSingleton()
+        self.management_signals_s = ManagementSignalsSingleton()
+        self.plain_signals_s = PlainSignalsSingleton()
+
         super().__init__(row=0, col=2)
-        self.initialize_ui()
+
+    def connect_to_signals(self) -> None:
+        self.action_signals_s.connect("decryption_requested", self.on_decryption_requested)
+        self.management_signals_s.connect("save_requested", self.on_save_requested)
+        self.management_signals_s.connect("text_overwrite_requested", self.on_text_overwrite_requested)
+        self.plain_signals_s.connect("plain_changed", self.on_plain_changed)
+        self.plain_signals_s.connect("plain_payload_prepared", self.on_plain_payload_prepared)
+
+    def get_cipher(self) -> CipherDict:
+        # TODO: replaced with real object CipherDict
+        return {}
 
     def initialize_ui(self) -> None:
         self.setMaximumWidth(MAIN_COMPONENT_DEFAULT_WIDTH)
@@ -22,15 +43,48 @@ class CipherComponent(Component):
                                        .set_height(DIMENSION_UNIT_SIZE))
 
         cipher_box = QtWidgets.QVBoxLayout(self)
-        cipher_box.addWidget(text_edit_builder.build()) 
+        cipher_text_edit: QtWidgets.QTextEdit = text_edit_builder.build()
+        cipher_text_edit.textChanged.connect(self.on_cipher_component_changed)
+        cipher_box.addWidget(cipher_text_edit) 
 
         nonce_box = QtWidgets.QHBoxLayout()
         nonce_box.addWidget(label_builder.set_text("Nonce:").build())
-        nonce_box.addWidget(line_edit_builder.build())
+        none_line_edit: QtWidgets.QLineEdit = line_edit_builder.build()
+        none_line_edit.textChanged.connect(self.on_cipher_component_changed)
+        nonce_box.addWidget(none_line_edit)
 
         salt_box = QtWidgets.QHBoxLayout()
         salt_box.addWidget(label_builder.set_text("Salt:").build())
-        salt_box.addWidget(line_edit_builder.build())
+        salt_line_edit: QtWidgets.QLineEdit = line_edit_builder.build()
+        salt_line_edit.textChanged.connect(self.on_cipher_component_changed)
+        salt_box.addWidget(salt_line_edit)
 
         cipher_box.addLayout(nonce_box)
         cipher_box.addLayout(salt_box)
+
+    @Slot(str)
+    def on_cipher_component_changed(self) -> None:
+        self.cipher_signals_s.emit("cipher_changed")
+
+    @Slot()
+    def on_decryption_requested(self) -> None:
+        self.cipher_signals_s.emit("cipher_payload_prepared", self.get_cipher())
+
+    @Slot()
+    def on_plain_changed(self) -> None:
+        # TODO: Clear text edit, nonce and salt components
+        print("Plain changed !")
+
+    @Slot(PlainDict)
+    def on_plain_payload_prepared(self, plain: PlainDict) -> None:
+        # TODO: Encrypt and place new CipherDict inside text edit, nonce and salt components
+        print("Plain payload to encrypt received !")
+
+    @Slot()
+    def on_save_requested(self) -> None:
+        self.management_signals_s.emit("payload_prepared", self.get_cipher())
+
+    @Slot(CipherDict)
+    def on_text_overwrite_requested(self, cipher_dict: CipherDict) -> None:
+        # TODO: Place CipherDict inside text edit, nonce and salt components
+        print("Text overwrite requested !")

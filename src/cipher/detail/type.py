@@ -9,6 +9,11 @@ class CipherDict(TypedDict):
     cipher: Cipher
     nonce: Nonce
     salt: Salt # Used to make an encryption key by combining it with user's password
+    cipher_algorithm_used: str
+
+class PlainDict(TypedDict):
+    text: Cipher
+    cipher_algorithm_to_use: str
 
 def cipher_dict_to_str_dict(cd: CipherDict) -> dict[str, str]:
     return { k: v.hex() for k, v in cd.items() }

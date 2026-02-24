@@ -4,7 +4,7 @@ from pathlib import Path
 from src.utils.logger import Logger, Level_en
 
 
-ROOT_FOLDER_NAME: str = "encryption"
+ROOT_FOLDER_NAME: str = "cryptography"
 
 class WritingMode_en(Enum):
     APPEND = "a"
