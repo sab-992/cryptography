@@ -66,7 +66,7 @@ class ManagementComponent(Component):
         # TODO: Allow file browsing to get file path
         file_path: str = ""
         # self.current_file_strategy.save(file_path, payload)
-        print("Payload to save received !")
+        print(f"Payload to save received: {payload} !")
 
     @Slot()
     def on_save_btn_clicked(self) -> None:

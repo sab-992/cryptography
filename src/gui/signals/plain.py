@@ -5,6 +5,7 @@ from src.gui.signals.detail.signal import SignalSingleton
 
 class PlainSignalsSingleton(SignalSingleton):
     class PlainSignals(QObject):
+        cipher_algorithm_changed = Signal(str)
         plain_changed = Signal()
         plain_payload_prepared = Signal(PlainDict)
 

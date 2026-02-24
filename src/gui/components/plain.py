@@ -29,7 +29,7 @@ class PlainComponent(Component):
         return {}
 
     def get_cipher_algorithms(self):
-        return [f"{cipher_alg.value.name}, mode: {cipher_alg.value.mode}" for cipher_alg in CipherAlgorithm_en]
+        return [str(cipher_alg.value) for cipher_alg in CipherAlgorithm_en]
 
     def initialize_ui(self) -> None:
         self.setMaximumWidth(MAIN_COMPONENT_DEFAULT_WIDTH)
@@ -43,16 +43,21 @@ class PlainComponent(Component):
         plain_text_edit: QtWidgets.QTextEdit = text_edit_builder.build()
         plain_text_edit.textChanged.connect(self.on_plain_component_changed)
 
-        cipher_algorithm_combo_box: QtWidgets.QComboBox = combo_box_builder.set_values(self.get_cipher_algorithms()).build()
-        cipher_algorithm_combo_box.currentIndexChanged.connect(self.on_cipher_changed)
+        self.cipher_algorithm_combo_box: QtWidgets.QComboBox = combo_box_builder.set_values(self.get_cipher_algorithms()).build()
+        self.cipher_algorithm_combo_box.currentIndexChanged.connect(self.on_cipher_algorithm_changed)
 
         plain_box.addWidget(plain_text_edit)
-        plain_box.addWidget(cipher_algorithm_combo_box)
+        plain_box.addWidget(self.cipher_algorithm_combo_box)
+        self.send_algorithm()
 
     @Slot()
     def on_cipher_changed(self) -> None:
         # TODO: Clear text edit component
         print("Cipher changed !")
+
+    @Slot()
+    def on_cipher_algorithm_changed(self) -> None:
+        self.send_algorithm()
 
     @Slot(CipherDict)
     def on_cipher_payload_prepared(self, cipher: CipherDict) -> None:
@@ -66,3 +71,6 @@ class PlainComponent(Component):
     @Slot(str)
     def on_plain_component_changed(self) -> None:
         self.plain_signals_s.emit("plain_changed")
+
+    def send_algorithm(self) -> None:
+        self.plain_signals_s.emit("cipher_algorithm_changed", self.cipher_algorithm_combo_box.currentText())

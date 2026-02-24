@@ -1,5 +1,6 @@
 from PySide6 import QtWidgets
 from PySide6.QtCore import Slot
+from src.cipher.cipher_algorithm_factory import Algorithm, CipherAlgorithmFactory
 from src.cipher.detail.type import CipherDict, PlainDict
 from src.gui.builder.label_builder import LabelBuilder
 from src.gui.builder.line_edit_builder import LineEditBuilder
@@ -25,12 +26,12 @@ class CipherComponent(Component):
         self.action_signals_s.connect("decryption_requested", self.on_decryption_requested)
         self.management_signals_s.connect("save_requested", self.on_save_requested)
         self.management_signals_s.connect("text_overwrite_requested", self.on_text_overwrite_requested)
+        self.plain_signals_s.connect("cipher_algorithm_changed", self.cipher_algorithm_changed)
         self.plain_signals_s.connect("plain_changed", self.on_plain_changed)
         self.plain_signals_s.connect("plain_payload_prepared", self.on_plain_payload_prepared)
 
     def get_cipher(self) -> CipherDict:
-        # TODO: replaced with real object CipherDict
-        return {}
+        return { "cipher": self.cipher_text_edit.toPlainText(), "nonce": self.none_line_edit.text(), "salt": self.salt_line_edit.text(), "cipher_algorithm_used": self.cipher_algorithm }
 
     def initialize_ui(self) -> None:
         self.setMaximumWidth(MAIN_COMPONENT_DEFAULT_WIDTH)
@@ -43,24 +44,28 @@ class CipherComponent(Component):
                                        .set_height(DIMENSION_UNIT_SIZE))
 
         cipher_box = QtWidgets.QVBoxLayout(self)
-        cipher_text_edit: QtWidgets.QTextEdit = text_edit_builder.build()
-        cipher_text_edit.textChanged.connect(self.on_cipher_component_changed)
-        cipher_box.addWidget(cipher_text_edit) 
+        self.cipher_text_edit: QtWidgets.QTextEdit = text_edit_builder.build()
+        self.cipher_text_edit.textChanged.connect(self.on_cipher_component_changed)
+        cipher_box.addWidget(self.cipher_text_edit) 
 
         nonce_box = QtWidgets.QHBoxLayout()
         nonce_box.addWidget(label_builder.set_text("Nonce:").build())
-        none_line_edit: QtWidgets.QLineEdit = line_edit_builder.build()
-        none_line_edit.textChanged.connect(self.on_cipher_component_changed)
-        nonce_box.addWidget(none_line_edit)
+        self.none_line_edit: QtWidgets.QLineEdit = line_edit_builder.build()
+        self.none_line_edit.textChanged.connect(self.on_cipher_component_changed)
+        nonce_box.addWidget(self.none_line_edit)
 
         salt_box = QtWidgets.QHBoxLayout()
         salt_box.addWidget(label_builder.set_text("Salt:").build())
-        salt_line_edit: QtWidgets.QLineEdit = line_edit_builder.build()
-        salt_line_edit.textChanged.connect(self.on_cipher_component_changed)
-        salt_box.addWidget(salt_line_edit)
+        self.salt_line_edit: QtWidgets.QLineEdit = line_edit_builder.build()
+        self.salt_line_edit.textChanged.connect(self.on_cipher_component_changed)
+        salt_box.addWidget(self.salt_line_edit)
 
         cipher_box.addLayout(nonce_box)
         cipher_box.addLayout(salt_box)
+
+    @Slot(str)
+    def cipher_algorithm_changed(self, algorithm: str) -> None:
+        self.cipher_algorithm: Algorithm = CipherAlgorithmFactory.get(algorithm)
 
     @Slot(str)
     def on_cipher_component_changed(self) -> None:
