@@ -17,7 +17,7 @@ class PlainComponent(Component):
         self.cipher_signals_s = CipherSignalsSingleton()
         self.plain_signals_s = PlainSignalsSingleton()
 
-        super().__init__(row=0, col=0)
+        super().__init__(row=1, col=0)
 
     def connect_to_signals(self) -> None:
         self.action_signals_s.connect("encryption_requested", self.on_encryption_requested)

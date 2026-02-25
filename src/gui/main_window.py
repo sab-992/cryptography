@@ -3,7 +3,7 @@ from PySide6 import QtWidgets
 from src.gui.detail.component import Component
 from src.gui.components.action import ActionComponent
 from src.gui.components.cipher import CipherComponent
-from src.gui.components.management import ManagementComponent
+from src.gui.components.cipher_management import CipherManagementComponent
 from src.gui.components.plain import PlainComponent
 from src.gui.detail.settings import WINDOW_NAME, WINDOW_SIZE
 from src.utils.logger import Logger, Level_en
@@ -24,7 +24,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         components: list[Component] = [ActionComponent(),
                                        CipherComponent(),
-                                       ManagementComponent(),
+                                       CipherManagementComponent(),
                                        PlainComponent()]
 
         for component in components:

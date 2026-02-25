@@ -20,7 +20,7 @@ class CipherComponent(Component):
         self.management_signals_s = ManagementSignalsSingleton()
         self.plain_signals_s = PlainSignalsSingleton()
 
-        super().__init__(row=0, col=2)
+        super().__init__(row=1, col=2)
 
     def connect_to_signals(self) -> None:
         self.action_signals_s.connect("decryption_requested", self.on_decryption_requested)

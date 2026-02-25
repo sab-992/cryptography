@@ -11,7 +11,7 @@ class ActionComponent(Component):
     def __init__(self):
         self.action_signal_s = ActionSignalsSingleton()
 
-        super().__init__(row=0, col=1)
+        super().__init__(row=1, col=1)
 
     def initialize_ui(self) -> None:
         self.setFixedWidth(ACTION_BUTTON_SIZE + DIMENSION_UNIT_SIZE // 2)

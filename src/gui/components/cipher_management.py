@@ -11,11 +11,11 @@ from src.utils.file_strategy.file_strategy_factory import FileStrategy_en, FileS
 from src.utils.logger import Logger, Level_en
 
 
-class ManagementComponent(Component):
+class CipherManagementComponent(Component):
     def __init__(self):
         self.management_signals_s: ManagementSignalsSingleton = ManagementSignalsSingleton()
 
-        super().__init__(row=1, col=2, alignment=QtCore.Qt.AlignmentFlag.AlignRight)
+        super().__init__(row=0, col=2, alignment=QtCore.Qt.AlignmentFlag.AlignRight)
 
     def connect_to_signals(self) -> None:
         self.management_signals_s.connect("payload_prepared", self.on_payload_prepared)
