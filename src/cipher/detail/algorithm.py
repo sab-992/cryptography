@@ -4,6 +4,9 @@ from src.utils.file_strategy.file_strategy import FileStrategy
 
 
 class Algorithm(ABC):
+    name: str = None
+    mode: str = None
+
     def __init__(self, strategy: FileStrategy):
         self.__strategy: FileStrategy = strategy
 
@@ -23,3 +26,10 @@ class Algorithm(ABC):
 
     def set_strategy(self, file_strategy: FileStrategy) -> None:
         self.__strategy = file_strategy
+
+    @classmethod
+    def as_string(cls):
+        return f"{cls.name}, mode: {cls.mode}"
+
+    def __str__(self) -> str:
+        return self.as_string()

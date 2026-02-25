@@ -7,6 +7,8 @@ from src.utils.settings import OUTPUT_FOLDER_PATH
 
 
 class JsonFS(FileStrategy):
+    name: str = "JSON"
+
     def __init__(self):
         pass
 

@@ -29,7 +29,7 @@ class PlainComponent(Component):
         return {}
 
     def get_cipher_algorithms(self):
-        return [str(cipher_alg.value) for cipher_alg in CipherAlgorithm_en]
+        return [cipher_algo.value.as_string() for cipher_algo in CipherAlgorithm_en]
 
     def initialize_ui(self) -> None:
         self.setMaximumWidth(MAIN_COMPONENT_DEFAULT_WIDTH)

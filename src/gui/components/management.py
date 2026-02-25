@@ -23,7 +23,7 @@ class ManagementComponent(Component):
         self.management_signals_s.connect("payload_prepared", self.on_payload_prepared)
 
     def get_file_strategies(self) -> list[str]:
-        return [strategy.value.name for strategy in FileStrategy_en]
+        return [strategy.value.as_string() for strategy in FileStrategy_en]
 
     def initialize_ui(self) -> None:
         SPACING = 10

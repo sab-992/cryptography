@@ -11,6 +11,9 @@ NONCE_SIZE: int = 12
 KDF_ITERATIONS: int = 100_000
 
 class AESGCM(Algorithm):
+    name: str = "AES"
+    mode: str = "GCM"
+
     def __init__(self, strategy: FileStrategy = FileStrategyFactory.get(FileStrategy_en.JSON)):
         super().__init__(strategy)
 
@@ -20,7 +23,7 @@ class AESGCM(Algorithm):
     def encrypt(self, password: str, decrypted: str) -> CipherDict:
         salt: Salt = os.urandom(SALT_SIZE)
         nonce: Nonce = os.urandom(NONCE_SIZE)
-        return { "cipher": AESGCM(self.__get_key(password, salt)).encrypt(nonce, decrypted.encode("utf-8"), None), "nonce": nonce, "salt": salt }
+        return { "cipher": AESGCM(self.__get_key(password, salt)).encrypt(nonce, decrypted.encode("utf-8"), None), "nonce": nonce, "salt": salt, "cipher_algorithm_used": str(self) }
 
     def __get_key(self, password: str, salt: bytes) -> bytes:
         return hashlib.pbkdf2_hmac("sha256", password.encode(), salt, KDF_ITERATIONS)
