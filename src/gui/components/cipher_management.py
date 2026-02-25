@@ -8,7 +8,7 @@ from src.gui.detail.component import Component
 from src.gui.signals.cipher_management import CipherManagementSignalsSingleton
 from src.gui.detail.settings import BUTTON_DEFAULT_HEIGHT, BUTTON_DEFAULT_WIDTH, DIMENSION_UNIT_SIZE, LABEL_DEFAULT_SIZE
 from src.gui.detail.styles import get_button_hover_effect
-from src.utils.file_strategy.file_strategy_factory import FileStrategy_en, FileStrategyFactory
+from src.utils.file_strategy.file_strategy_factory import FileStrategyFactory
 from src.utils.logger import Logger, Level_en
 
 
@@ -20,9 +20,6 @@ class CipherManagementComponent(Component):
 
     def connect_to_signals(self) -> None:
         self.cipher_management_signals_s.connect("payload_prepared", self.on_payload_prepared)
-
-    def get_file_strategies(self) -> list[str]:
-        return [strategy.value.as_string() for strategy in FileStrategy_en]
 
     def initialize_ui(self) -> None:
         SPACING = 10
