@@ -77,8 +77,7 @@ class CipherComponent(Component):
 
     @Slot()
     def on_plain_changed(self) -> None:
-        # TODO: Clear text edit, nonce and salt components
-        print("Plain changed !")
+        self.clear()
 
     @Slot(PlainDict)
     def on_plain_payload_prepared(self, plain: PlainDict) -> None:
@@ -93,3 +92,8 @@ class CipherComponent(Component):
     def on_text_overwrite_requested(self, cipher_dict: CipherDict) -> None:
         # TODO: Place CipherDict inside text edit, nonce and salt components
         print("Text overwrite requested !")
+
+    def clear(self) -> None:
+        self.cipher_text_edit.clear()
+        self.none_line_edit.clear()
+        self.salt_line_edit.clear()
