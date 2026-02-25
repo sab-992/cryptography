@@ -17,7 +17,7 @@ class FileStrategy(ABC):
         pass
 
     @abstractmethod
-    def save(self, name: str, cipher_dict: CipherDict) -> None:
+    def save(self, path: str, cipher_dict: CipherDict) -> None:
         pass
 
     def __str__(self):

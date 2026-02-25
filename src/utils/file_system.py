@@ -29,7 +29,7 @@ class FileSystem():
         if(not os.path.exists(folder_path)):
             raise Exception(Logger.log(message=f"Folder: '{folder_path}' does not exist", level=Level_en.ERROR))
 
-        with open(f"{FileSystem.get_root()}/{path}", mode=mode.value) as f:
+        with open(path, mode=mode.value) as f:
             f.write(content)
 
     @staticmethod
