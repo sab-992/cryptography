@@ -61,7 +61,6 @@ class PlainComponent(Component):
 
     @Slot(CipherDict)
     def on_cipher_payload_prepared(self, cipher_dict: CipherDict) -> None:
-        # TODO: Decrypt and place new plain text inside text edit component
         # TODO: Open modal window, with an line edit in password mode to input password
         password = ""
         self.overwrite(CipherAlgorithmFactory.get(cipher_dict["cipher_algorithm_used"]).decrypt(password, cipher_dict))
