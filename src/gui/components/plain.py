@@ -1,7 +1,7 @@
 from PySide6 import QtWidgets
 from PySide6.QtCore import Slot
 from src.cipher.detail.type import CipherDict, PlainDict
-from src.cipher.cipher_algorithm_factory import CipherAlgorithm_en
+from src.cipher.cipher_algorithm_factory import CipherAlgorithm_en, CipherAlgorithmFactory
 from src.gui.builder.combo_box_builder import ComboBoxBuilder
 from src.gui.builder.text_edit_builder import TextEditBuilder
 from src.gui.detail.component import Component
@@ -60,9 +60,11 @@ class PlainComponent(Component):
         self.send_algorithm()
 
     @Slot(CipherDict)
-    def on_cipher_payload_prepared(self, cipher: CipherDict) -> None:
+    def on_cipher_payload_prepared(self, cipher_dict: CipherDict) -> None:
         # TODO: Decrypt and place new plain text inside text edit component
-        print("Cipher payload to decrypt received !")
+        # TODO: Open modal window, with an line edit in password mode to input password
+        password = ""
+        self.overwrite(CipherAlgorithmFactory.get(cipher_dict["cipher_algorithm_used"]).decrypt(password, cipher_dict))
 
     @Slot()
     def on_encryption_requested(self) -> None:
@@ -71,6 +73,9 @@ class PlainComponent(Component):
     @Slot(str)
     def on_plain_component_changed(self) -> None:
         self.plain_signals_s.emit("plain_changed")
+
+    def overwrite(self, plain: str) -> None:
+        self.plain_text_edit.setText(plain)
 
     def send_algorithm(self) -> None:
         self.plain_signals_s.emit("cipher_algorithm_changed", self.cipher_algorithm_combo_box.currentText())
