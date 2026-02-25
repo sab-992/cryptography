@@ -28,7 +28,7 @@ class Algorithm(ABC):
         self.__strategy = file_strategy
 
     @classmethod
-    def as_string(cls):
+    def as_string(cls) -> str:
         return f"{cls.name}, mode: {cls.mode}"
 
     def __str__(self) -> str:
