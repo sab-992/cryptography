@@ -91,7 +91,10 @@ class CipherComponent(Component):
     @Slot(CipherDict)
     def on_text_overwrite_requested(self, cipher_dict: CipherDict) -> None:
         # TODO: Place CipherDict inside text edit, nonce and salt components
-        print("Text overwrite requested !")
+        self.cipher_text_edit.setText(cipher_dict["cipher"])
+        self.none_line_edit.setText(cipher_dict["nonce"])
+        self.salt_line_edit.setText(cipher_dict["salt"])
+        self.cipher_algorithm = CipherAlgorithmFactory.get(cipher_dict["cipher_algorithm_used"])
 
     def clear(self) -> None:
         self.cipher_text_edit.clear()
