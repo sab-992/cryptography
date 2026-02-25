@@ -86,8 +86,10 @@ class CipherComponent(Component):
 
     @Slot(PlainDict)
     def on_plain_payload_prepared(self, plain: PlainDict) -> None:
-        # TODO: Encrypt and place new CipherDict inside text edit, nonce and salt components
-        print("Plain payload to encrypt received !")
+        self.cipher_algorithm = CipherAlgorithmFactory.get(plain["cipher_algorithm_to_use"])
+        # TODO: Open modal window, with an line edit in password mode to input password
+        password = ""
+        self.overwrite(self.cipher_algorithm.encrypt(password, plain["text"]))
 
     @Slot()
     def on_save_requested(self) -> None:

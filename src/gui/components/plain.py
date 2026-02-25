@@ -25,8 +25,7 @@ class PlainComponent(Component):
         self.cipher_signals_s.connect("cipher_payload_prepared", self.on_cipher_payload_prepared)
 
     def get_plain(self) -> PlainDict:
-        # TODO: replaced with real object PlainDict
-        return {}
+        return {"text": self.plain_text_edit.toPlainText(), "cipher_algorithm_to_use": self.cipher_algorithm_combo_box.currentText() }
 
     def get_cipher_algorithms(self):
         return [cipher_algo.value.as_string() for cipher_algo in CipherAlgorithm_en]
@@ -40,13 +39,13 @@ class PlainComponent(Component):
 
         plain_box = QtWidgets.QVBoxLayout(self)
 
-        plain_text_edit: QtWidgets.QTextEdit = text_edit_builder.build()
-        plain_text_edit.textChanged.connect(self.on_plain_component_changed)
+        self.plain_text_edit: QtWidgets.QTextEdit = text_edit_builder.build()
+        self.plain_text_edit.textChanged.connect(self.on_plain_component_changed)
 
         self.cipher_algorithm_combo_box: QtWidgets.QComboBox = combo_box_builder.set_values(self.get_cipher_algorithms()).build()
         self.cipher_algorithm_combo_box.currentIndexChanged.connect(self.on_cipher_algorithm_changed)
 
-        plain_box.addWidget(plain_text_edit)
+        plain_box.addWidget(self.plain_text_edit)
         plain_box.addWidget(self.cipher_algorithm_combo_box)
         self.send_algorithm()
 
