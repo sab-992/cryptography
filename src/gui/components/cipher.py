@@ -22,6 +22,11 @@ class CipherComponent(Component):
 
         super().__init__(row=0, col=2)
 
+    def clear(self) -> None:
+        self.cipher_text_edit.clear()
+        self.none_line_edit.clear()
+        self.salt_line_edit.clear()
+
     def connect_to_signals(self) -> None:
         self.action_signals_s.connect("decryption_requested", self.on_decryption_requested)
         self.management_signals_s.connect("save_requested", self.on_save_requested)
@@ -90,13 +95,10 @@ class CipherComponent(Component):
 
     @Slot(CipherDict)
     def on_text_overwrite_requested(self, cipher_dict: CipherDict) -> None:
-        # TODO: Place CipherDict inside text edit, nonce and salt components
+        self.overwrite(cipher_dict)
+
+    def overwrite(self, cipher_dict: CipherDict) -> None:
         self.cipher_text_edit.setText(cipher_dict["cipher"])
         self.none_line_edit.setText(cipher_dict["nonce"])
         self.salt_line_edit.setText(cipher_dict["salt"])
         self.cipher_algorithm = CipherAlgorithmFactory.get(cipher_dict["cipher_algorithm_used"])
-
-    def clear(self) -> None:
-        self.cipher_text_edit.clear()
-        self.none_line_edit.clear()
-        self.salt_line_edit.clear()
