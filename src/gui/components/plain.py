@@ -47,12 +47,13 @@ class PlainComponent(Component):
 
         plain_box.addWidget(self.plain_text_edit)
         plain_box.addWidget(self.cipher_algorithm_combo_box)
+
         self.send_algorithm()
+        self.elements_to_clear.add(self.plain_text_edit)
 
     @Slot()
     def on_cipher_changed(self) -> None:
-        # TODO: Clear text edit component
-        print("Cipher changed !")
+        self.clear()
 
     @Slot()
     def on_cipher_algorithm_changed(self) -> None:

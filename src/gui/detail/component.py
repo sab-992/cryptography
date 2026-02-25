@@ -10,9 +10,17 @@ class Component(QtWidgets.QWidget):
         self.row_span: int = row_span
         self.col_span: int = col_span
         self.alignment: QtCore.Qt.AlignmentFlag = alignment
+        self.elements_to_clear: set[QtWidgets.QWidget] = set()
 
         self.connect_to_signals()
         self.initialize_ui()
+
+    def clear(self) -> None:
+        for element in self.elements_to_clear:
+            element.blockSignals(True)
+            if hasattr(element, 'clear'):
+                element.clear()
+            element.blockSignals(False)
 
     def connect_to_signals(self) -> None:
         pass

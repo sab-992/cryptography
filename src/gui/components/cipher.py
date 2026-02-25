@@ -22,11 +22,6 @@ class CipherComponent(Component):
 
         super().__init__(row=0, col=2)
 
-    def clear(self) -> None:
-        self.cipher_text_edit.clear()
-        self.none_line_edit.clear()
-        self.salt_line_edit.clear()
-
     def connect_to_signals(self) -> None:
         self.action_signals_s.connect("decryption_requested", self.on_decryption_requested)
         self.management_signals_s.connect("save_requested", self.on_save_requested)
@@ -36,7 +31,7 @@ class CipherComponent(Component):
         self.plain_signals_s.connect("plain_payload_prepared", self.on_plain_payload_prepared)
 
     def get_cipher(self) -> CipherDict:
-        return { "cipher": self.cipher_text_edit.toPlainText(), "nonce": self.none_line_edit.text(), "salt": self.salt_line_edit.text(), "cipher_algorithm_used": self.cipher_algorithm }
+        return { "cipher": self.cipher_text_edit.toPlainText(), "nonce": self.none_line_edit.text(), "salt": self.salt_line_edit.text(), "cipher_algorithm_used": str(self.cipher_algorithm) }
 
     def initialize_ui(self) -> None:
         self.setMaximumWidth(MAIN_COMPONENT_DEFAULT_WIDTH)
@@ -67,6 +62,10 @@ class CipherComponent(Component):
 
         cipher_box.addLayout(nonce_box)
         cipher_box.addLayout(salt_box)
+
+        self.elements_to_clear.add(self.cipher_text_edit)
+        self.elements_to_clear.add(self.none_line_edit)
+        self.elements_to_clear.add(self.salt_line_edit)
 
     @Slot(str)
     def cipher_algorithm_changed(self, algorithm: str) -> None:
