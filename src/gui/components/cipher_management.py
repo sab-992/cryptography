@@ -5,7 +5,7 @@ from src.cipher.detail.type import CipherDict
 from src.gui.builder.label_builder import LabelBuilder
 from src.gui.builder.push_button_builder import PushButtonBuilder
 from src.gui.detail.component import Component
-from src.gui.signals.management import ManagementSignalsSingleton
+from src.gui.signals.cipher_management import CipherManagementSignalsSingleton
 from src.gui.detail.settings import BUTTON_DEFAULT_HEIGHT, BUTTON_DEFAULT_WIDTH, DIMENSION_UNIT_SIZE, LABEL_DEFAULT_SIZE
 from src.gui.detail.styles import get_button_hover_effect
 from src.utils.file_strategy.file_strategy_factory import FileStrategy_en, FileStrategyFactory
@@ -14,7 +14,7 @@ from src.utils.logger import Logger, Level_en
 
 class CipherManagementComponent(Component):
     def __init__(self):
-        self.management_signals_s: ManagementSignalsSingleton = ManagementSignalsSingleton()
+        self.management_signals_s: CipherManagementSignalsSingleton = CipherManagementSignalsSingleton()
 
         super().__init__(row=0, col=2, alignment=QtCore.Qt.AlignmentFlag.AlignRight)
 
@@ -74,7 +74,7 @@ class CipherManagementComponent(Component):
         elif len(file) <= 0:
             Logger.log(message="File is empty", level=Level_en.WARNING, to_std_out=True)
         else:
-            self.management_signals_s.emit("text_overwrite_requested", file)
+            self.management_signals_s.emit("cipher_text_overwrite_requested", file)
 
     def path_is_empty(self, path: str):
         return not path or len(path) <= 0

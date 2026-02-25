@@ -51,6 +51,9 @@ class PlainComponent(Component):
         self.send_algorithm()
         self.elements_to_clear.add(self.plain_text_edit)
 
+    def is_empty(self) -> bool:
+        return  len(self.plain_text_edit.toPlainText()) <= 0
+
     @Slot()
     def on_cipher_changed(self) -> None:
         self.clear()
@@ -67,7 +70,8 @@ class PlainComponent(Component):
 
     @Slot()
     def on_encryption_requested(self) -> None:
-        self.plain_signals_s.emit("plain_payload_prepared", self.get_plain())
+        if not self.is_empty():
+            self.plain_signals_s.emit("plain_payload_prepared", self.get_plain())
 
     @Slot(str)
     def on_plain_component_changed(self) -> None:

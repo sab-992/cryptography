@@ -9,7 +9,7 @@ from src.gui.detail.component import Component
 from src.gui.detail.settings import DIMENSION_UNIT_SIZE, LABEL_DEFAULT_SIZE, MAIN_COMPONENT_DEFAULT_WIDTH, TEXT_EDIT_DEFAULT_HEIGHT
 from src.gui.signals.action import ActionSignalsSingleton
 from src.gui.signals.cipher import CipherSignalsSingleton
-from src.gui.signals.management import ManagementSignalsSingleton
+from src.gui.signals.cipher_management import CipherManagementSignalsSingleton
 from src.gui.signals.plain import PlainSignalsSingleton
 
 
@@ -17,15 +17,19 @@ class CipherComponent(Component):
     def __init__(self):
         self.action_signals_s = ActionSignalsSingleton()
         self.cipher_signals_s = CipherSignalsSingleton()
-        self.management_signals_s = ManagementSignalsSingleton()
+        self.management_signals_s = CipherManagementSignalsSingleton()
         self.plain_signals_s = PlainSignalsSingleton()
 
         super().__init__(row=1, col=2)
 
+    @Slot(str)
+    def cipher_algorithm_changed(self, algorithm: str) -> None:
+        self.cipher_algorithm: Algorithm = CipherAlgorithmFactory.get(algorithm)
+
     def connect_to_signals(self) -> None:
         self.action_signals_s.connect("decryption_requested", self.on_decryption_requested)
         self.management_signals_s.connect("save_requested", self.on_save_requested)
-        self.management_signals_s.connect("text_overwrite_requested", self.on_text_overwrite_requested)
+        self.management_signals_s.connect("cipher_text_overwrite_requested", self.on_cipher_text_overwrite_requested)
         self.plain_signals_s.connect("cipher_algorithm_changed", self.cipher_algorithm_changed)
         self.plain_signals_s.connect("plain_changed", self.on_plain_changed)
         self.plain_signals_s.connect("plain_payload_prepared", self.on_plain_payload_prepared)
@@ -67,9 +71,10 @@ class CipherComponent(Component):
         self.elements_to_clear.add(self.none_line_edit)
         self.elements_to_clear.add(self.salt_line_edit)
 
-    @Slot(str)
-    def cipher_algorithm_changed(self, algorithm: str) -> None:
-        self.cipher_algorithm: Algorithm = CipherAlgorithmFactory.get(algorithm)
+    def is_empty(self) -> bool:
+        return  len(self.cipher_text_edit.toPlainText()) <= 0 or\
+                len(self.none_line_edit.text()) <= 0 or\
+                len(self.salt_line_edit.text()) <= 0
 
     @Slot(str)
     def on_cipher_component_changed(self) -> None:
@@ -77,7 +82,8 @@ class CipherComponent(Component):
 
     @Slot()
     def on_decryption_requested(self) -> None:
-        self.cipher_signals_s.emit("cipher_payload_prepared", self.get_cipher())
+        if not self.is_empty():
+            self.cipher_signals_s.emit("cipher_payload_prepared", self.get_cipher())
 
     @Slot()
     def on_plain_changed(self) -> None:
@@ -95,7 +101,7 @@ class CipherComponent(Component):
         self.management_signals_s.emit("payload_prepared", self.get_cipher())
 
     @Slot(CipherDict)
-    def on_text_overwrite_requested(self, cipher_dict: CipherDict) -> None:
+    def on_cipher_text_overwrite_requested(self, cipher_dict: CipherDict) -> None:
         self.overwrite(cipher_dict)
 
     def overwrite(self, cipher_dict: CipherDict) -> None:
