@@ -9,6 +9,7 @@ from src.gui.detail.settings import COMBO_BOX_DEFAULT_WIDTH, DIMENSION_UNIT_SIZE
 from src.gui.signals.action import ActionSignalsSingleton
 from src.gui.signals.cipher import CipherSignalsSingleton
 from src.gui.signals.plain import PlainSignalsSingleton
+from src.gui.signals.plain_management import PlainManagementSignalsSingleton
 
 
 class PlainComponent(Component):
@@ -16,6 +17,7 @@ class PlainComponent(Component):
         self.action_signals_s = ActionSignalsSingleton()
         self.cipher_signals_s = CipherSignalsSingleton()
         self.plain_signals_s = PlainSignalsSingleton()
+        self.plain_management_signals_s = PlainManagementSignalsSingleton()
 
         super().__init__(row=1, col=0)
 
@@ -23,6 +25,7 @@ class PlainComponent(Component):
         self.action_signals_s.connect("encryption_requested", self.on_encryption_requested)
         self.cipher_signals_s.connect("cipher_changed", self.on_cipher_changed)
         self.cipher_signals_s.connect("cipher_payload_prepared", self.on_cipher_payload_prepared)
+        self.plain_management_signals_s.connect("plain_text_overwrite_requested", self.on_plain_text_overwrite_requested)
 
     def get_plain(self) -> PlainDict:
         return {"text": self.plain_text_edit.toPlainText(), "cipher_algorithm_to_use": self.cipher_algorithm_combo_box.currentText() }
@@ -76,6 +79,10 @@ class PlainComponent(Component):
     @Slot(str)
     def on_plain_component_changed(self) -> None:
         self.plain_signals_s.emit("plain_changed")
+
+    @Slot(str)
+    def on_plain_text_overwrite_requested(self, plain: str) -> None:
+        self.overwrite(plain)
 
     def overwrite(self, plain: str) -> None:
         self.plain_text_edit.setText(plain)
