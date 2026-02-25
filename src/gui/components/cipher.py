@@ -17,7 +17,7 @@ class CipherComponent(Component):
     def __init__(self):
         self.action_signals_s = ActionSignalsSingleton()
         self.cipher_signals_s = CipherSignalsSingleton()
-        self.management_signals_s = CipherManagementSignalsSingleton()
+        self.cipher_management_signals_s = CipherManagementSignalsSingleton()
         self.plain_signals_s = PlainSignalsSingleton()
 
         super().__init__(row=1, col=2)
@@ -28,8 +28,8 @@ class CipherComponent(Component):
 
     def connect_to_signals(self) -> None:
         self.action_signals_s.connect("decryption_requested", self.on_decryption_requested)
-        self.management_signals_s.connect("save_requested", self.on_save_requested)
-        self.management_signals_s.connect("cipher_text_overwrite_requested", self.on_cipher_text_overwrite_requested)
+        self.cipher_management_signals_s.connect("save_requested", self.on_save_requested)
+        self.cipher_management_signals_s.connect("cipher_text_overwrite_requested", self.on_cipher_text_overwrite_requested)
         self.plain_signals_s.connect("cipher_algorithm_changed", self.cipher_algorithm_changed)
         self.plain_signals_s.connect("plain_changed", self.on_plain_changed)
         self.plain_signals_s.connect("plain_payload_prepared", self.on_plain_payload_prepared)
@@ -98,7 +98,7 @@ class CipherComponent(Component):
 
     @Slot()
     def on_save_requested(self) -> None:
-        self.management_signals_s.emit("payload_prepared", self.get_cipher())
+        self.cipher_management_signals_s.emit("payload_prepared", self.get_cipher())
 
     @Slot(CipherDict)
     def on_cipher_text_overwrite_requested(self, cipher_dict: CipherDict) -> None:

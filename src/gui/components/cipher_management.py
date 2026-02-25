@@ -14,12 +14,12 @@ from src.utils.logger import Logger, Level_en
 
 class CipherManagementComponent(Component):
     def __init__(self):
-        self.management_signals_s: CipherManagementSignalsSingleton = CipherManagementSignalsSingleton()
+        self.cipher_management_signals_s: CipherManagementSignalsSingleton = CipherManagementSignalsSingleton()
 
         super().__init__(row=0, col=2, alignment=QtCore.Qt.AlignmentFlag.AlignRight)
 
     def connect_to_signals(self) -> None:
-        self.management_signals_s.connect("payload_prepared", self.on_payload_prepared)
+        self.cipher_management_signals_s.connect("payload_prepared", self.on_payload_prepared)
 
     def get_file_strategies(self) -> list[str]:
         return [strategy.value.as_string() for strategy in FileStrategy_en]
@@ -59,7 +59,7 @@ class CipherManagementComponent(Component):
 
     @Slot()
     def on_save_btn_clicked(self) -> None:
-        self.management_signals_s.emit("save_requested")
+        self.cipher_management_signals_s.emit("save_requested")
 
     @Slot()
     def on_upload_btn_clicked(self) -> None:
@@ -74,7 +74,7 @@ class CipherManagementComponent(Component):
         elif len(file) <= 0:
             Logger.log(message="File is empty", level=Level_en.WARNING, to_std_out=True)
         else:
-            self.management_signals_s.emit("cipher_text_overwrite_requested", file)
+            self.cipher_management_signals_s.emit("cipher_text_overwrite_requested", file)
 
     def path_is_empty(self, path: str):
         return not path or len(path) <= 0
