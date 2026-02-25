@@ -12,13 +12,13 @@ class CipherAlgorithmFactory:
     factory: dict[str, Type[Algorithm]] = { cipher_algo.value.as_string(): cipher_algo.value for cipher_algo in CipherAlgorithm_en}
 
     @classmethod
-    def get(cls, strategy: Any) -> Algorithm:
-        if isinstance(strategy, CipherAlgorithm_en):
-            return strategy.value()
-
-        obj_type = cls.factory.get(strategy, None)
+    def get(cls, algorithm: Any) -> Algorithm:
+        if isinstance(algorithm, CipherAlgorithm_en):
+            return algorithm.value()
+        
+        obj_type = cls.factory.get(algorithm, None)
 
         if not obj_type:
-            raise Exception(Logger.log(message=f"File strategy {strategy} is not handled", level=Level_en.ERROR))
+            raise Exception(Logger.log(message=f"Algorithm: {algorithm} is not handled", level=Level_en.ERROR))
         
         return obj_type()
