@@ -1,7 +1,10 @@
+import hashlib
 from abc import ABC, abstractmethod
 from src.cipher.detail.type import CipherDict
 from src.utils.file_strategy.file_strategy import FileStrategy
 
+
+KDF_ITERATIONS: int = 100_000
 
 class Algorithm(ABC):
     name: str = None
@@ -17,6 +20,12 @@ class Algorithm(ABC):
     @abstractmethod
     def encrypt(self, password: str, decrypted: str) -> CipherDict:
         pass
+
+    def is_string_empty(self, string: str) -> bool:
+        return not string or len(string) <= 0
+
+    def get_key(self, password: str, salt: bytes) -> bytes:
+        return hashlib.pbkdf2_hmac("sha256", password.encode(), salt, KDF_ITERATIONS)
 
     def read(self, path: str) -> CipherDict:
         return self.__strategy.read(path)
