@@ -6,7 +6,7 @@ from src.gui.builder.label_builder import LabelBuilder
 from src.gui.builder.push_button_builder import PushButtonBuilder
 from src.gui.detail.component import Component
 from src.gui.signals.cipher_management import CipherManagementSignalsSingleton
-from src.gui.detail.settings import BUTTON_DEFAULT_HEIGHT, BUTTON_DEFAULT_WIDTH, DIMENSION_UNIT_SIZE, LABEL_DEFAULT_SIZE
+from src.gui.detail.settings import BUTTON_DEFAULT_HEIGHT, BUTTON_DEFAULT_WIDTH, DIMENSION_UNIT_SIZE
 from src.gui.detail.styles import get_button_hover_effect
 from src.utils.file_strategy.file_strategy_factory import FileStrategyFactory
 from src.utils.file_system import FileSystem
