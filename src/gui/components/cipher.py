@@ -98,7 +98,7 @@ class CipherComponent(Component):
         password = PasswordDialogComponent().open()
 
         if not password or len(password) <= 0:
-            Logger.log(message="No password entered !", level=Level_en.WARNING, to_std_out=True)
+            Logger.log(message="No password entered", level=Level_en.ERROR, to_std_out=True)
         else:
             self.overwrite(self.cipher_algorithm.encrypt(password, plain["text"]))
 
