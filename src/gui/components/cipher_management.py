@@ -26,8 +26,7 @@ class CipherManagementComponent(Component):
 
     def initialize_ui(self) -> None:
         SPACING = 10
-        label_builder = (LabelBuilder().set_width(LABEL_DEFAULT_SIZE * 1.5)
-                                       .set_height(DIMENSION_UNIT_SIZE))
+        label_builder = (LabelBuilder().set_height(DIMENSION_UNIT_SIZE))
         push_button_builder = PushButtonBuilder().set_height(BUTTON_DEFAULT_HEIGHT)
 
         management_box = QtWidgets.QHBoxLayout(self)
