@@ -2,6 +2,7 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Slot
 from src.cipher.cipher_algorithm_factory import Algorithm, CipherAlgorithmFactory
 from src.cipher.detail.type import CipherDict, PlainDict
+from src.gui.components.password_dialog import PasswordDialogComponent
 from src.gui.builder.label_builder import LabelBuilder
 from src.gui.builder.line_edit_builder import LineEditBuilder
 from src.gui.builder.text_edit_builder import TextEditBuilder
@@ -11,6 +12,7 @@ from src.gui.signals.action import ActionSignalsSingleton
 from src.gui.signals.cipher import CipherSignalsSingleton
 from src.gui.signals.cipher_management import CipherManagementSignalsSingleton
 from src.gui.signals.plain import PlainSignalsSingleton
+from src.utils.logger import Logger, Level_en
 
 
 class CipherComponent(Component):
@@ -92,9 +94,13 @@ class CipherComponent(Component):
     @Slot(PlainDict)
     def on_plain_payload_prepared(self, plain: PlainDict) -> None:
         self.cipher_algorithm = CipherAlgorithmFactory.get(plain["cipher_algorithm_to_use"])
-        # TODO: Open modal window, with an line edit in password mode to input password
-        password = ""
-        self.overwrite(self.cipher_algorithm.encrypt(password, plain["text"]))
+
+        password = PasswordDialogComponent().open()
+
+        if not password or len(password) <= 0:
+            Logger.log(message="No password entered !", level=Level_en.WARNING, to_std_out=True)
+        else:
+            self.overwrite(self.cipher_algorithm.encrypt(password, plain["text"]))
 
     @Slot()
     def on_save_requested(self) -> None:

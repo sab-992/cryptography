@@ -1,7 +1,9 @@
+from cryptography.exceptions import InvalidTag
 from PySide6 import QtWidgets
 from PySide6.QtCore import Slot
 from src.cipher.detail.type import CipherDict, PlainDict
 from src.cipher.cipher_algorithm_factory import CipherAlgorithm_en, CipherAlgorithmFactory
+from src.gui.components.password_dialog import PasswordDialogComponent
 from src.gui.builder.combo_box_builder import ComboBoxBuilder
 from src.gui.builder.text_edit_builder import TextEditBuilder
 from src.gui.detail.component import Component
@@ -10,6 +12,7 @@ from src.gui.signals.action import ActionSignalsSingleton
 from src.gui.signals.cipher import CipherSignalsSingleton
 from src.gui.signals.plain import PlainSignalsSingleton
 from src.gui.signals.plain_management import PlainManagementSignalsSingleton
+from src.utils.logger import Logger, Level_en
 
 
 class PlainComponent(Component):
@@ -67,9 +70,16 @@ class PlainComponent(Component):
 
     @Slot(CipherDict)
     def on_cipher_payload_prepared(self, cipher_dict: CipherDict) -> None:
-        # TODO: Open modal window, with an line edit in password mode to input password
-        password = ""
-        self.overwrite(CipherAlgorithmFactory.get(cipher_dict["cipher_algorithm_used"]).decrypt(password, cipher_dict))
+        password = PasswordDialogComponent().open()
+
+        if not password or len(password) <= 0:
+            Logger.log(message="No password entered !", level=Level_en.WARNING, to_std_out=True)
+            return
+
+        try:
+            self.overwrite(CipherAlgorithmFactory.get(cipher_dict["cipher_algorithm_used"]).decrypt(password, cipher_dict))
+        except InvalidTag as e:
+            Logger.log(message="Incorrect password", level=Level_en.ERROR, to_std_out=True)
 
     @Slot()
     def on_encryption_requested(self) -> None:
