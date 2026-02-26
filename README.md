@@ -1,5 +1,11 @@
 # Cryptography
 A personal project built for me to learn more about Qt (using PySide 6), cipher algorithms and how to write maintainable code using OOP principles.
+- A cross-platform app for encrypting files and text.
+- Uses a user-provided password combined with a randomly generated salt to create encryption keys. The password is required for both encryption and decryption.
+- Accepts pre-encrypted files only if the format is supported* by the app.
+- Encrypted output can be saved in any format supported* by the app.
+
+*Supported formats a can be found in: **'src/utils/file_strategy'**
 
 ## Getting Started
 ### Prerequisites
