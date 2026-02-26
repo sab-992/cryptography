@@ -9,12 +9,15 @@ from src.gui.signals.cipher_management import CipherManagementSignalsSingleton
 from src.gui.detail.settings import BUTTON_DEFAULT_HEIGHT, BUTTON_DEFAULT_WIDTH, DIMENSION_UNIT_SIZE, LABEL_DEFAULT_SIZE
 from src.gui.detail.styles import get_button_hover_effect
 from src.utils.file_strategy.file_strategy_factory import FileStrategyFactory
+from src.utils.file_system import FileSystem
 from src.utils.logger import Logger, Level_en
 
 
 class CipherManagementComponent(Component):
     def __init__(self):
         self.cipher_management_signals_s: CipherManagementSignalsSingleton = CipherManagementSignalsSingleton()
+        self.previous_save_path: str = FileSystem.get_root()
+        self.previous_upload_path: str = FileSystem.get_root()
 
         super().__init__(row=0, col=2, alignment=QtCore.Qt.AlignmentFlag.AlignRight)
 
@@ -47,10 +50,12 @@ class CipherManagementComponent(Component):
 
     @Slot(CipherDict)
     def on_payload_prepared(self, payload: CipherDict) -> None:
-        file_path_info = QtWidgets.QFileDialog.getSaveFileName(self, "Save File",str(Path(__file__).parent.resolve()), f"Files: (*{" *".join(FileStrategyFactory.supported())});;All Files (*)")
+        file_path_info = QtWidgets.QFileDialog.getSaveFileName(self, "Save File", self.previous_save_path, f"Files: (*{" *".join(FileStrategyFactory.supported())});;All Files (*)")
 
         if not file_path_info or self.path_is_empty(file_path_info[0]):
             return
+        
+        self.previous_save_path = str(Path(file_path_info[0]).parent.resolve())
         
         FileStrategyFactory.get(Path(file_path_info[0]).suffix).save(file_path_info[0], payload)
 
@@ -60,10 +65,12 @@ class CipherManagementComponent(Component):
 
     @Slot()
     def on_upload_btn_clicked(self) -> None:
-        file_path_info = QtWidgets.QFileDialog.getOpenFileName(self, "Open File",str(Path(__file__).parent.resolve()), f"Files: (*{" *".join(FileStrategyFactory.supported())})")
+        file_path_info = QtWidgets.QFileDialog.getOpenFileName(self, "Open File", self.previous_upload_path, f"Files: (*{" *".join(FileStrategyFactory.supported())})")
 
         if not file_path_info or self.path_is_empty(file_path_info[0]):
             return
+        
+        self.previous_upload_path = str(Path(file_path_info[0]).parent.resolve())
         
         file = FileStrategyFactory.get(Path(file_path_info[0]).suffix).read(file_path_info[0])
         if not file:

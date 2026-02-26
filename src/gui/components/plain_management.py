@@ -14,6 +14,7 @@ from src.utils.logger import Logger, Level_en
 class PlainManagementComponent(Component):
     def __init__(self):
         self.plain_management_signals_s: PlainManagementSignalsSingleton = PlainManagementSignalsSingleton()
+        self.previous_upload_path: str = FileSystem.get_root()
 
         super().__init__(row=0, col=0, alignment=QtCore.Qt.AlignmentFlag.AlignRight)
 
@@ -39,10 +40,12 @@ class PlainManagementComponent(Component):
 
     @Slot()
     def on_upload_btn_clicked(self) -> None:
-        file_path_info = QtWidgets.QFileDialog.getOpenFileName(self, "Open File",str(Path(__file__).parent.resolve()), f"All Files (*)")
+        file_path_info = QtWidgets.QFileDialog.getOpenFileName(self, "Open File", self.previous_upload_path, f"All Files (*)")
 
         if not file_path_info or self.path_is_empty(file_path_info[0]):
             return
+        
+        self.previous_upload_path = str(Path(file_path_info[0]).parent.resolve())
 
         try:
             file = FileSystem.read(file_path_info[0])

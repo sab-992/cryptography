@@ -33,13 +33,13 @@ class FileSystem():
             f.write(content)
 
     @staticmethod
-    def get_root():
+    def get_root() -> str:
         current_path = Path.cwd()
         root_name = ROOT_FOLDER_NAME
 
         for parent in [current_path] + list(current_path.parents):
             current_path = parent / root_name
             if current_path.exists():
-                return current_path
+                return str(current_path)
             
         raise Exception(Logger.log(message=f"Root folder not found", level=Level_en.ERROR))
