@@ -1,7 +1,7 @@
 from pathlib import Path
 from PySide6 import QtCore, QtWidgets
 from PySide6.QtCore import Slot
-from src.cipher.detail.type import CipherDict
+from src.cipher.detail.utils import CipherDict
 from src.gui.builder.label_builder import LabelBuilder
 from src.gui.builder.push_button_builder import PushButtonBuilder
 from src.gui.detail.component import Component

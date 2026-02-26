@@ -1,5 +1,5 @@
 import json
-from src.cipher.detail.type import CipherDict, is_cipher_dict
+from src.cipher.detail.utils import CipherDict, is_cipher_dict
 from src.utils.file_strategy.file_strategy import FileStrategy
 from src.utils.file_system import FileSystem, WritingMode_en
 from src.utils.logger import Logger, Level_en

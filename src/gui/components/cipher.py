@@ -1,7 +1,7 @@
 from PySide6 import QtWidgets
 from PySide6.QtCore import Slot
 from src.cipher.cipher_algorithm_factory import Algorithm, CipherAlgorithmFactory
-from src.cipher.detail.type import CipherDict, PlainDict
+from src.cipher.detail.utils import CipherDict, PlainDict, is_cipher_dict_empty
 from src.gui.components.password_dialog import PasswordDialogComponent
 from src.gui.builder.label_builder import LabelBuilder
 from src.gui.builder.line_edit_builder import LineEditBuilder
@@ -115,6 +115,9 @@ class CipherComponent(Component):
         self.overwrite(cipher_dict)
 
     def overwrite(self, cipher_dict: CipherDict) -> None:
+        if is_cipher_dict_empty(cipher_dict):
+            return
+
         self.cipher_text_edit.setText(cipher_dict["cipher"])
         self.none_line_edit.setText(cipher_dict["nonce"])
         self.salt_line_edit.setText(cipher_dict["salt"])

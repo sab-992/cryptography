@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from src.cipher.detail.type import CipherDict
+from src.cipher.detail.utils import CipherDict
 
 
 class FileStrategy(ABC):

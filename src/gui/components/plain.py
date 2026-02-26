@@ -1,7 +1,6 @@
-from cryptography.exceptions import InvalidTag
 from PySide6 import QtWidgets
 from PySide6.QtCore import Slot
-from src.cipher.detail.type import CipherDict, PlainDict
+from src.cipher.detail.utils import CipherDict, PlainDict
 from src.cipher.cipher_algorithm_factory import CipherAlgorithm_en, CipherAlgorithmFactory
 from src.gui.components.password_dialog import PasswordDialogComponent
 from src.gui.builder.combo_box_builder import ComboBoxBuilder
@@ -76,10 +75,7 @@ class PlainComponent(Component):
             Logger.log(message="No password entered", level=Level_en.ERROR, to_std_out=True)
             return
 
-        try:
-            self.overwrite(CipherAlgorithmFactory.get(cipher_dict["cipher_algorithm_used"]).decrypt(password, cipher_dict))
-        except InvalidTag as e:
-            Logger.log(message="Incorrect password", level=Level_en.ERROR, to_std_out=True)
+        self.overwrite(CipherAlgorithmFactory.get(cipher_dict["cipher_algorithm_used"]).decrypt(password, cipher_dict))
 
     @Slot()
     def on_encryption_requested(self) -> None:
@@ -95,7 +91,8 @@ class PlainComponent(Component):
         self.overwrite(plain)
 
     def overwrite(self, plain: str) -> None:
-        self.plain_text_edit.setText(plain)
+        if plain and len(plain) > 0:
+            self.plain_text_edit.setText(plain)
 
     def send_algorithm(self) -> None:
         self.plain_signals_s.emit("cipher_algorithm_changed", self.cipher_algorithm_combo_box.currentText())

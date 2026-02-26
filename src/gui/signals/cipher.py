@@ -1,5 +1,5 @@
 from PySide6.QtCore import QObject, Signal
-from src.cipher.detail.type import CipherDict
+from src.cipher.detail.utils import CipherDict
 from src.gui.signals.detail.signal import SignalSingleton
 
 
