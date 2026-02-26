@@ -104,6 +104,10 @@ class CipherComponent(Component):
 
     @Slot()
     def on_save_requested(self) -> None:
+        if self.is_empty():
+            Logger.log(message="Nothing to save", level=Level_en.WARNING, to_std_out=True)
+            return
+
         self.cipher_management_signals_s.emit("payload_prepared", self.get_cipher())
 
     @Slot(CipherDict)
