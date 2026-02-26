@@ -24,7 +24,7 @@ class FileSystem():
 
     @staticmethod
     def write(path: str, content: str, mode: WritingMode_en = "w") -> None:
-        folder_path = os.path.basename(os.path.dirname(path))
+        folder_path = os.path.dirname(path)
 
         if(not os.path.exists(folder_path)):
             raise Exception(Logger.log(message=f"Folder: '{folder_path}' does not exist", level=Level_en.ERROR))
