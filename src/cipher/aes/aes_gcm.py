@@ -5,7 +5,6 @@ from src.cipher.detail.utils import CipherDict
 from src.utils.file_strategy.file_strategy_factory import FileStrategy, FileStrategy_en, FileStrategyFactory
 
 
-SALT_SIZE: int = 16
 NONCE_SIZE: int = 12
 
 class AESGCM(Algorithm):
