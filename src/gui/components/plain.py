@@ -4,6 +4,7 @@ from src.cipher.detail.utils import EncryptionRequest
 from src.cipher.cipher_algorithm_factory import CipherAlgorithm_en, CipherAlgorithmFactory
 from src.gui.components.password_dialog import PasswordDialogComponent
 from src.gui.builder.combo_box_builder import ComboBoxBuilder
+from src.gui.builder.label_builder import LabelBuilder
 from src.gui.builder.text_edit_builder import TextEditBuilder
 from src.gui.detail.component import Component
 from src.gui.detail.settings import COMBO_BOX_DEFAULT_WIDTH, DIMENSION_UNIT_SIZE, MAIN_COMPONENT_DEFAULT_WIDTH, TEXT_EDIT_DEFAULT_HEIGHT
@@ -39,6 +40,7 @@ class PlainComponent(Component):
         self.setMaximumWidth(MAIN_COMPONENT_DEFAULT_WIDTH)
 
         text_edit_builder = (TextEditBuilder().set_height(TEXT_EDIT_DEFAULT_HEIGHT))
+        label_builder = (LabelBuilder().set_height(DIMENSION_UNIT_SIZE))
         combo_box_builder = (ComboBoxBuilder().set_width(COMBO_BOX_DEFAULT_WIDTH)
                                               .set_height(DIMENSION_UNIT_SIZE // 1.5))
 
@@ -47,10 +49,13 @@ class PlainComponent(Component):
         self.plain_text_edit: QtWidgets.QTextEdit = text_edit_builder.build()
         self.plain_text_edit.textChanged.connect(self.on_plain_component_changed)
 
+        cipher_algo_box = QtWidgets.QHBoxLayout()
         self.cipher_algorithm_combo_box: QtWidgets.QComboBox = combo_box_builder.set_values(self.get_cipher_algorithms()).build()
+        cipher_algo_box.addWidget(label_builder.set_text("Encryption Algorithm: ").build())
+        cipher_algo_box.addWidget(self.cipher_algorithm_combo_box)
 
         plain_box.addWidget(self.plain_text_edit)
-        plain_box.addWidget(self.cipher_algorithm_combo_box)
+        plain_box.addLayout(cipher_algo_box)
 
         self.elements_to_clear.add(self.plain_text_edit)
 
