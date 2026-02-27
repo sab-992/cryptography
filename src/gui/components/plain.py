@@ -41,8 +41,7 @@ class PlainComponent(Component):
 
         text_edit_builder = (TextEditBuilder().set_height(TEXT_EDIT_DEFAULT_HEIGHT))
         label_builder = (LabelBuilder().set_height(DIMENSION_UNIT_SIZE))
-        combo_box_builder = (ComboBoxBuilder().set_width(COMBO_BOX_DEFAULT_WIDTH)
-                                              .set_height(DIMENSION_UNIT_SIZE // 1.5))
+        combo_box_builder = (ComboBoxBuilder().set_height(DIMENSION_UNIT_SIZE // 1.5))
 
         plain_box = QtWidgets.QVBoxLayout(self)
 
