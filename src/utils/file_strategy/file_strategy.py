@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from src.cipher.detail.utils import CipherDict
 
 
 class FileStrategy(ABC):
@@ -13,11 +12,11 @@ class FileStrategy(ABC):
         return cls.name
 
     @abstractmethod
-    def read(self, path: str) -> CipherDict:
+    def read(self, path: str) -> str:
         pass
 
     @abstractmethod
-    def save(self, path: str, cipher_dict: CipherDict) -> None:
+    def save(self, path: str, cipher: str) -> None:
         pass
 
     def __str__(self):

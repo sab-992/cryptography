@@ -3,8 +3,6 @@ from cryptography.hazmat.primitives.ciphers import Cipher
 from cryptography.hazmat.primitives.ciphers.algorithms import AES256
 from cryptography.hazmat.primitives.ciphers.modes import GCM
 from src.cipher.detail.algorithm import Algorithm, SALT_SIZE
-from src.cipher.detail.utils import CipherDict
-from src.utils.file_strategy.file_strategy_factory import FileStrategy, FileStrategy_en, FileStrategyFactory
 
 
 IV_SIZE: int = 12
@@ -15,14 +13,14 @@ class AESGCM(Algorithm):
     name: str = "AES"
     mode: str = "GCM"
 
-    def __init__(self, strategy: FileStrategy = FileStrategyFactory.get(FileStrategy_en.JSON)):
-        super().__init__(strategy)
+    def __init__(self):
+        super().__init__()
 
-    def get_plain(self, password: str, cipher_dict: CipherDict) -> str:
+    def get_plain(self, password: str, cipher_hex: str) -> str:
         iv_start, iv_end = -(IV_SIZE + SALT_SIZE), -SALT_SIZE
         tag_start, tag_end = -TOTAL_ADDED_SIZE, -(TOTAL_ADDED_SIZE - TAG_SIZE)
 
-        cipher: bytes = bytes.fromhex(cipher_dict["cipher"])
+        cipher: bytes = bytes.fromhex(cipher_hex)
         salt = cipher[-SALT_SIZE:]
         key_dict = self.get_key(password, salt)
         iv = cipher[iv_start:iv_end]
@@ -33,11 +31,11 @@ class AESGCM(Algorithm):
         decrypted_bytes = decryptor.update(encrypted_data) + decryptor.finalize()
         return decrypted_bytes.decode(ENCODING)
 
-    def get_cipher_dict(self, password: str, decrypted: str) -> CipherDict:
+    def get_cipher(self, password: str, decrypted: str) -> str:
         key_dict = self.get_key(password)
         iv = secrets.token_bytes(IV_SIZE)
         encryptor = Cipher(AES256(key_dict["key"]), GCM(initialization_vector=iv)).encryptor()
         encrypted_bytes = encryptor.update(decrypted.encode(ENCODING)) + encryptor.finalize()
         cipher = bytes.fromhex((encrypted_bytes + encryptor.tag + iv + key_dict["salt"]).hex())
 
-        return { "cipher": cipher.hex(), "cipher_algorithm_used": str(self) }
+        return cipher.hex()

@@ -1,7 +1,7 @@
 from PySide6 import QtWidgets
 from PySide6.QtCore import Slot
-from src.cipher.cipher_algorithm_factory import Algorithm, CipherAlgorithmFactory
-from src.cipher.detail.utils import CipherDict, PlainDict, is_cipher_dict_empty
+from src.cipher.cipher_algorithm_factory import CipherAlgorithmFactory
+from src.cipher.detail.utils import EncryptionRequest, is_string_empty
 from src.gui.components.password_dialog import PasswordDialogComponent
 from src.gui.builder.text_edit_builder import TextEditBuilder
 from src.gui.detail.component import Component
@@ -22,20 +22,15 @@ class CipherComponent(Component):
 
         super().__init__(row=1, col=2)
 
-    @Slot(str)
-    def cipher_algorithm_changed(self, algorithm: str) -> None:
-        self.cipher_algorithm: Algorithm = CipherAlgorithmFactory.get(algorithm)
-
     def connect_to_signals(self) -> None:
         self.action_signals_s.connect("decryption_requested", self.on_decryption_requested)
         self.cipher_management_signals_s.connect("save_requested", self.on_save_requested)
         self.cipher_management_signals_s.connect("cipher_text_overwrite_requested", self.on_cipher_text_overwrite_requested)
-        self.plain_signals_s.connect("cipher_algorithm_changed", self.cipher_algorithm_changed)
         self.plain_signals_s.connect("plain_changed", self.on_plain_changed)
         self.plain_signals_s.connect("plain_payload_prepared", self.on_plain_payload_prepared)
 
-    def get_cipher(self) -> CipherDict:
-        return { "cipher": self.cipher_text_edit.toPlainText(), "cipher_algorithm_used": str(self.cipher_algorithm) }
+    def get_cipher(self) -> str:
+        return self.cipher_text_edit.toPlainText()
 
     def initialize_ui(self) -> None:
         self.setMaximumWidth(MAIN_COMPONENT_DEFAULT_WIDTH)
@@ -67,16 +62,14 @@ class CipherComponent(Component):
     def on_plain_changed(self) -> None:
         self.clear()
 
-    @Slot(PlainDict)
-    def on_plain_payload_prepared(self, plain: PlainDict) -> None:
-        self.cipher_algorithm = CipherAlgorithmFactory.get(plain["cipher_algorithm_to_use"])
-
+    @Slot(EncryptionRequest)
+    def on_plain_payload_prepared(self, request: EncryptionRequest) -> None:
         password = PasswordDialogComponent().open()
 
         if not password or len(password) <= 0:
             Logger.log(message="No password entered", level=Level_en.ERROR, to_std_out=True)
         else:
-            self.overwrite(self.cipher_algorithm.encrypt(password, plain["text"]))
+            self.overwrite(CipherAlgorithmFactory.get(request["cipher_algorithm_to_use"]).encrypt(password, request["text"]))
 
     @Slot()
     def on_save_requested(self) -> None:
@@ -86,13 +79,12 @@ class CipherComponent(Component):
 
         self.cipher_management_signals_s.emit("payload_prepared", self.get_cipher())
 
-    @Slot(CipherDict)
-    def on_cipher_text_overwrite_requested(self, cipher_dict: CipherDict) -> None:
-        self.overwrite(cipher_dict)
+    @Slot(str)
+    def on_cipher_text_overwrite_requested(self, cipher: str) -> None:
+        self.overwrite(cipher)
 
-    def overwrite(self, cipher_dict: CipherDict) -> None:
-        if is_cipher_dict_empty(cipher_dict):
+    def overwrite(self, cipher: str) -> None:
+        if is_string_empty(cipher):
             return
 
-        self.cipher_text_edit.setText(cipher_dict["cipher"])
-        self.cipher_algorithm = CipherAlgorithmFactory.get(cipher_dict["cipher_algorithm_used"])
+        self.cipher_text_edit.setText(cipher)

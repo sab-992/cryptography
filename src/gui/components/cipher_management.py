@@ -1,7 +1,6 @@
 from pathlib import Path
 from PySide6 import QtCore, QtWidgets
 from PySide6.QtCore import Slot
-from src.cipher.detail.utils import CipherDict
 from src.gui.builder.label_builder import LabelBuilder
 from src.gui.builder.push_button_builder import PushButtonBuilder
 from src.gui.detail.component import Component
@@ -47,8 +46,8 @@ class CipherManagementComponent(Component):
         management_box.addWidget(upload_btn)
         management_box.addWidget(save_btn)
 
-    @Slot(CipherDict)
-    def on_payload_prepared(self, payload: CipherDict) -> None:
+    @Slot(str)
+    def on_payload_prepared(self, payload: str) -> None:
         file_path_info = QtWidgets.QFileDialog.getSaveFileName(self, "Save File", self.previous_save_path, f"Files: (*{" *".join(FileStrategyFactory.supported())});;All Files (*)")
 
         if not file_path_info or self.path_is_empty(file_path_info[0]):

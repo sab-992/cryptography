@@ -1,6 +1,6 @@
 from PySide6 import QtWidgets
 from PySide6.QtCore import Slot
-from src.cipher.detail.utils import CipherDict, PlainDict
+from src.cipher.detail.utils import EncryptionRequest
 from src.cipher.cipher_algorithm_factory import CipherAlgorithm_en, CipherAlgorithmFactory
 from src.gui.components.password_dialog import PasswordDialogComponent
 from src.gui.builder.combo_box_builder import ComboBoxBuilder
@@ -29,8 +29,8 @@ class PlainComponent(Component):
         self.cipher_signals_s.connect("cipher_payload_prepared", self.on_cipher_payload_prepared)
         self.plain_management_signals_s.connect("plain_text_overwrite_requested", self.on_plain_text_overwrite_requested)
 
-    def get_plain(self) -> PlainDict:
-        return {"text": self.plain_text_edit.toPlainText(), "cipher_algorithm_to_use": self.cipher_algorithm_combo_box.currentText() }
+    def get_plain(self) -> EncryptionRequest:
+        return { "text": self.plain_text_edit.toPlainText(), "cipher_algorithm_to_use": self.cipher_algorithm_combo_box.currentText() }
 
     def get_cipher_algorithms(self):
         return [cipher_algo.value.as_string() for cipher_algo in CipherAlgorithm_en]
@@ -48,12 +48,10 @@ class PlainComponent(Component):
         self.plain_text_edit.textChanged.connect(self.on_plain_component_changed)
 
         self.cipher_algorithm_combo_box: QtWidgets.QComboBox = combo_box_builder.set_values(self.get_cipher_algorithms()).build()
-        self.cipher_algorithm_combo_box.currentIndexChanged.connect(self.on_cipher_algorithm_changed)
 
         plain_box.addWidget(self.plain_text_edit)
         plain_box.addWidget(self.cipher_algorithm_combo_box)
 
-        self.send_algorithm()
         self.elements_to_clear.add(self.plain_text_edit)
 
     def is_empty(self) -> bool:
@@ -63,19 +61,15 @@ class PlainComponent(Component):
     def on_cipher_changed(self) -> None:
         self.clear()
 
-    @Slot()
-    def on_cipher_algorithm_changed(self) -> None:
-        self.send_algorithm()
-
-    @Slot(CipherDict)
-    def on_cipher_payload_prepared(self, cipher_dict: CipherDict) -> None:
+    @Slot(str)
+    def on_cipher_payload_prepared(self, cipher: str) -> None:
         password = PasswordDialogComponent().open()
 
         if not password or len(password) <= 0:
             Logger.log(message="No password entered", level=Level_en.ERROR, to_std_out=True)
             return
 
-        self.overwrite(CipherAlgorithmFactory.get(cipher_dict["cipher_algorithm_used"]).decrypt(password, cipher_dict))
+        self.overwrite(CipherAlgorithmFactory.get(self.cipher_algorithm_combo_box.currentText()).decrypt(password, cipher))
 
     @Slot()
     def on_encryption_requested(self) -> None:
@@ -93,6 +87,3 @@ class PlainComponent(Component):
     def overwrite(self, plain: str) -> None:
         if plain and len(plain) > 0:
             self.plain_text_edit.setText(plain)
-
-    def send_algorithm(self) -> None:
-        self.plain_signals_s.emit("cipher_algorithm_changed", self.cipher_algorithm_combo_box.currentText())

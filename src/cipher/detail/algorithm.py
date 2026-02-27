@@ -2,8 +2,7 @@ import secrets
 from abc import ABC, abstractmethod
 from cryptography.exceptions import InvalidTag
 from cryptography.hazmat.primitives.kdf.argon2 import Argon2id
-from src.cipher.detail.utils import CipherDict, get_empty_cipher_dict, is_string_empty, is_cipher_dict_empty
-from src.utils.file_strategy.file_strategy import FileStrategy
+from src.cipher.detail.utils import is_string_empty
 from src.utils.logger import Logger, Level_en
 from typing import TypedDict
 
@@ -23,31 +22,31 @@ class Algorithm(ABC):
     name: str = None
     mode: str = None
 
-    def __init__(self, strategy: FileStrategy):
-        self.__strategy: FileStrategy = strategy
+    def __init__(self):
+        pass
 
     @classmethod
     def as_string(cls) -> str:
         return f"{cls.name}, mode: {cls.mode}"
 
-    def decrypt(self, password: str, cipher_dict: CipherDict) -> str:
-        if  is_string_empty(password) or is_cipher_dict_empty(cipher_dict):
+    def decrypt(self, password: str, cipher: str) -> str:
+        if  is_string_empty(password) or is_string_empty(cipher):
             return ""
         
         try:
-            return self.get_plain(password, cipher_dict)
+            return self.get_plain(password, cipher)
         except InvalidTag:
             Logger.log(message="Invalid password or the encrypted data has been tampered with", level=Level_en.ERROR, to_std_out=True)
         
 
-    def encrypt(self, password: str, decrypted: str) -> CipherDict:
+    def encrypt(self, password: str, decrypted: str) -> str:
         if is_string_empty(password) or is_string_empty(decrypted):
-            return get_empty_cipher_dict(str(self))
+            return ""
 
-        return self.get_cipher_dict(password, decrypted)
+        return self.get_cipher(password, decrypted)
 
     @abstractmethod
-    def get_cipher_dict(self, password: str, decrypted: str) -> CipherDict:
+    def get_cipher(self, password: str, decrypted: str) -> str:
         pass
 
     def get_key(self, password: str, salt: bytes=secrets.token_bytes(SALT_SIZE)) -> KeyDict:
@@ -59,17 +58,8 @@ class Algorithm(ABC):
                  "salt": salt }
 
     @abstractmethod
-    def get_plain(self, password: str, cipher_dict: CipherDict) -> str:
+    def get_plain(self, password: str, cipher: str) -> str:
         pass
-
-    def read(self, path: str) -> CipherDict:
-        return self.__strategy.read(path)
-
-    def save(self, file_name: str, cipher_dict: CipherDict) -> None:
-        self.__strategy.save(file_name, cipher_dict)
-
-    def set_strategy(self, file_strategy: FileStrategy) -> None:
-        self.__strategy = file_strategy
 
     def __str__(self) -> str:
         return self.as_string()
