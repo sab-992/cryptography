@@ -5,7 +5,7 @@ from src.cipher.detail.utils import EncryptionRequest, is_string_empty
 from src.gui.components.password_dialog import PasswordDialogComponent
 from src.gui.builder.text_edit_builder import TextEditBuilder
 from src.gui.detail.component import Component
-from src.gui.detail.settings import DIMENSION_UNIT_SIZE, MAIN_COMPONENT_DEFAULT_WIDTH, TEXT_EDIT_DEFAULT_HEIGHT
+from src.gui.detail.settings import MAIN_COMPONENT_DEFAULT_WIDTH, TEXT_EDIT_DEFAULT_HEIGHT
 from src.gui.signals.action import ActionSignalsSingleton
 from src.gui.signals.cipher import CipherSignalsSingleton
 from src.gui.signals.cipher_management import CipherManagementSignalsSingleton
@@ -35,9 +35,7 @@ class CipherComponent(Component):
     def initialize_ui(self) -> None:
         self.setMaximumWidth(MAIN_COMPONENT_DEFAULT_WIDTH)
 
-        text_edit_builder = (TextEditBuilder().set_height(TEXT_EDIT_DEFAULT_HEIGHT - 2 * DIMENSION_UNIT_SIZE)) # We take off 2 times the DIMENSION_UNIT_SIZE so that the cipher 
-                                                                                                               # component (1 QTextEdit and 2 QLineEdit) is the same size as the 
-                                                                                                               # plain component.
+        text_edit_builder = (TextEditBuilder().set_height(TEXT_EDIT_DEFAULT_HEIGHT))
 
         cipher_box = QtWidgets.QVBoxLayout(self)
         self.cipher_text_edit: QtWidgets.QTextEdit = text_edit_builder.build()
