@@ -2,13 +2,13 @@ import secrets
 from cryptography.hazmat.primitives.ciphers import Cipher
 from cryptography.hazmat.primitives.ciphers.algorithms import AES256
 from cryptography.hazmat.primitives.ciphers.modes import GCM
-from src.cipher.detail.algorithm import Algorithm, SALT_SIZE
+from src.cipher.detail.algorithm import Algorithm
 
 
 IV_SIZE: int = 12
 ENCODING: str = "utf-8"
 TAG_SIZE: int = 16
-TOTAL_ADDED_SIZE = TAG_SIZE + IV_SIZE + SALT_SIZE
+
 class AESGCM(Algorithm):
     name: str = "AES - 256 bits"
     mode: str = "GCM"
