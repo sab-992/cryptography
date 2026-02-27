@@ -10,7 +10,7 @@ ENCODING: str = "utf-8"
 TAG_SIZE: int = 16
 TOTAL_ADDED_SIZE = TAG_SIZE + IV_SIZE + SALT_SIZE
 class AESGCM(Algorithm):
-    name: str = "AES"
+    name: str = "AES - 256 bits"
     mode: str = "GCM"
 
     def __init__(self):
