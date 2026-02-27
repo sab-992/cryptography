@@ -1,6 +1,8 @@
 import secrets
 from abc import ABC, abstractmethod
 from cryptography.exceptions import InvalidTag
+from cryptography.hazmat.primitives.hashes import HashAlgorithm
+from cryptography.hazmat.primitives.hmac import HMAC
 from cryptography.hazmat.primitives.kdf.argon2 import Argon2id
 from src.cipher.detail.utils import is_string_empty
 from src.utils.logger import Logger, Level_en
@@ -34,6 +36,11 @@ class Algorithm(ABC):
     @classmethod
     def as_string(cls) -> str:
         return f"{cls.name}, mode: {cls.mode}"
+
+    def create_tag(self, decrypted: bytes, key: bytes, hash_algorithm: HashAlgorithm) -> bytes:
+        hmac = HMAC(key, hash_algorithm)
+        hmac.update(decrypted)
+        return hmac.finalize()
 
     def decrypt(self, password: str, cipher: str) -> str:
         if  is_string_empty(password) or is_string_empty(cipher):
@@ -73,6 +80,11 @@ class Algorithm(ABC):
     @abstractmethod
     def get_plain(self, password: str, cipher: str) -> str:
         pass
+
+    def validate_tag(self, decrypted: bytes, key: bytes, hash_algorithm: HashAlgorithm, tag: bytes) -> bytes:
+        hmac = HMAC(key, hash_algorithm)
+        hmac.update(decrypted)
+        hmac.verify(tag)
 
     def __str__(self) -> str:
         return self.as_string()
