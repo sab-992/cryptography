@@ -2,7 +2,7 @@ import secrets
 from cryptography.hazmat.primitives.ciphers import Cipher
 from cryptography.hazmat.primitives.ciphers.algorithms import AES256
 from cryptography.hazmat.primitives.ciphers.modes import GCM
-from src.cipher.detail.algorithm import Algorithm
+from src.cipher.detail.algorithm import Algorithm, SALT_SIZE
 from src.cipher.detail.utils import CipherDict
 from src.utils.file_strategy.file_strategy_factory import FileStrategy, FileStrategy_en, FileStrategyFactory
 
@@ -10,7 +10,7 @@ from src.utils.file_strategy.file_strategy_factory import FileStrategy, FileStra
 IV_SIZE: int = 12
 ENCODING: str = "utf-8"
 TAG_SIZE: int = 16
-
+TOTAL_ADDED_SIZE = TAG_SIZE + IV_SIZE + SALT_SIZE
 class AESGCM(Algorithm):
     name: str = "AES"
     mode: str = "GCM"
@@ -19,19 +19,25 @@ class AESGCM(Algorithm):
         super().__init__(strategy)
 
     def get_plain(self, password: str, cipher_dict: CipherDict) -> str:
-        salt = bytes.fromhex(cipher_dict["salt"])
-        key_dict = self.get_key(password, salt)
-        cipher = bytes.fromhex(cipher_dict["cipher"])[:-TAG_SIZE]
-        nonce = bytes.fromhex(cipher_dict["nonce"])
-        tag = bytes.fromhex(cipher_dict["cipher"])[-TAG_SIZE:]
+        iv_start, iv_end = -(IV_SIZE + SALT_SIZE), -SALT_SIZE
+        tag_start, tag_end = -TOTAL_ADDED_SIZE, -(TOTAL_ADDED_SIZE - TAG_SIZE)
 
-        decryptor = Cipher(AES256(key_dict["key"]), GCM(initialization_vector=nonce, tag=tag)).decryptor()
-        decrypted_bytes = decryptor.update(cipher) + decryptor.finalize()
+        cipher: bytes = bytes.fromhex(cipher_dict["cipher"])
+        salt = cipher[-SALT_SIZE:]
+        key_dict = self.get_key(password, salt)
+        iv = cipher[iv_start:iv_end]
+        tag = cipher[tag_start:tag_end]
+        encrypted_data = cipher[:-TOTAL_ADDED_SIZE]
+
+        decryptor = Cipher(AES256(key_dict["key"]), GCM(initialization_vector=iv, tag=tag)).decryptor()
+        decrypted_bytes = decryptor.update(encrypted_data) + decryptor.finalize()
         return decrypted_bytes.decode(ENCODING)
 
     def get_cipher_dict(self, password: str, decrypted: str) -> CipherDict:
         key_dict = self.get_key(password)
-        nonce = secrets.token_bytes(IV_SIZE)
-        encryptor = Cipher(AES256(key_dict["key"]), GCM(initialization_vector=nonce)).encryptor()
+        iv = secrets.token_bytes(IV_SIZE)
+        encryptor = Cipher(AES256(key_dict["key"]), GCM(initialization_vector=iv)).encryptor()
         encrypted_bytes = encryptor.update(decrypted.encode(ENCODING)) + encryptor.finalize()
-        return { "cipher": (encrypted_bytes + encryptor.tag).hex(), "nonce": nonce.hex(), "salt": key_dict["salt"].hex(), "cipher_algorithm_used": str(self) }
+        cipher = bytes.fromhex((encrypted_bytes + encryptor.tag + iv + key_dict["salt"]).hex())
+
+        return { "cipher": cipher.hex(), "cipher_algorithm_used": str(self) }

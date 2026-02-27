@@ -3,11 +3,9 @@ from PySide6.QtCore import Slot
 from src.cipher.cipher_algorithm_factory import Algorithm, CipherAlgorithmFactory
 from src.cipher.detail.utils import CipherDict, PlainDict, is_cipher_dict_empty
 from src.gui.components.password_dialog import PasswordDialogComponent
-from src.gui.builder.label_builder import LabelBuilder
-from src.gui.builder.line_edit_builder import LineEditBuilder
 from src.gui.builder.text_edit_builder import TextEditBuilder
 from src.gui.detail.component import Component
-from src.gui.detail.settings import DIMENSION_UNIT_SIZE, LABEL_DEFAULT_SIZE, MAIN_COMPONENT_DEFAULT_WIDTH, TEXT_EDIT_DEFAULT_HEIGHT
+from src.gui.detail.settings import DIMENSION_UNIT_SIZE, MAIN_COMPONENT_DEFAULT_WIDTH, TEXT_EDIT_DEFAULT_HEIGHT
 from src.gui.signals.action import ActionSignalsSingleton
 from src.gui.signals.cipher import CipherSignalsSingleton
 from src.gui.signals.cipher_management import CipherManagementSignalsSingleton
@@ -37,7 +35,7 @@ class CipherComponent(Component):
         self.plain_signals_s.connect("plain_payload_prepared", self.on_plain_payload_prepared)
 
     def get_cipher(self) -> CipherDict:
-        return { "cipher": self.cipher_text_edit.toPlainText(), "nonce": self.none_line_edit.text(), "salt": self.salt_line_edit.text(), "cipher_algorithm_used": str(self.cipher_algorithm) }
+        return { "cipher": self.cipher_text_edit.toPlainText(), "cipher_algorithm_used": str(self.cipher_algorithm) }
 
     def initialize_ui(self) -> None:
         self.setMaximumWidth(MAIN_COMPONENT_DEFAULT_WIDTH)
@@ -45,38 +43,16 @@ class CipherComponent(Component):
         text_edit_builder = (TextEditBuilder().set_height(TEXT_EDIT_DEFAULT_HEIGHT - 2 * DIMENSION_UNIT_SIZE)) # We take off 2 times the DIMENSION_UNIT_SIZE so that the cipher 
                                                                                                                # component (1 QTextEdit and 2 QLineEdit) is the same size as the 
                                                                                                                # plain component.
-        line_edit_builder = (LineEditBuilder().set_height(DIMENSION_UNIT_SIZE))
-        label_builder = (LabelBuilder().set_width(LABEL_DEFAULT_SIZE)
-                                       .set_height(DIMENSION_UNIT_SIZE))
 
         cipher_box = QtWidgets.QVBoxLayout(self)
         self.cipher_text_edit: QtWidgets.QTextEdit = text_edit_builder.build()
         self.cipher_text_edit.textChanged.connect(self.on_cipher_component_changed)
         cipher_box.addWidget(self.cipher_text_edit) 
 
-        nonce_box = QtWidgets.QHBoxLayout()
-        nonce_box.addWidget(label_builder.set_text("Nonce:").build())
-        self.none_line_edit: QtWidgets.QLineEdit = line_edit_builder.build()
-        self.none_line_edit.textChanged.connect(self.on_cipher_component_changed)
-        nonce_box.addWidget(self.none_line_edit)
-
-        salt_box = QtWidgets.QHBoxLayout()
-        salt_box.addWidget(label_builder.set_text("Salt:").build())
-        self.salt_line_edit: QtWidgets.QLineEdit = line_edit_builder.build()
-        self.salt_line_edit.textChanged.connect(self.on_cipher_component_changed)
-        salt_box.addWidget(self.salt_line_edit)
-
-        cipher_box.addLayout(nonce_box)
-        cipher_box.addLayout(salt_box)
-
         self.elements_to_clear.add(self.cipher_text_edit)
-        self.elements_to_clear.add(self.none_line_edit)
-        self.elements_to_clear.add(self.salt_line_edit)
 
     def is_empty(self) -> bool:
-        return  len(self.cipher_text_edit.toPlainText()) <= 0 or\
-                len(self.none_line_edit.text()) <= 0 or\
-                len(self.salt_line_edit.text()) <= 0
+        return  len(self.cipher_text_edit.toPlainText()) <= 0
 
     @Slot(str)
     def on_cipher_component_changed(self) -> None:
@@ -119,6 +95,4 @@ class CipherComponent(Component):
             return
 
         self.cipher_text_edit.setText(cipher_dict["cipher"])
-        self.none_line_edit.setText(cipher_dict["nonce"])
-        self.salt_line_edit.setText(cipher_dict["salt"])
         self.cipher_algorithm = CipherAlgorithmFactory.get(cipher_dict["cipher_algorithm_used"])
