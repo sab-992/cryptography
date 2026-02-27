@@ -18,6 +18,12 @@ class KeyDict(TypedDict):
     key: bytes
     salt: bytes
 
+class DecryptionInformation(TypedDict):
+    encrypted_data: bytes
+    tag: bytes
+    iv: bytes
+    salt: bytes
+
 class Algorithm(ABC):
     name: str = None
     mode: str = None
@@ -56,6 +62,13 @@ class Algorithm(ABC):
                                  lanes=ARGON2_LANES,
                                  memory_cost=ARGON2_MEMORY).derive(password.encode()),
                  "salt": salt }
+
+    def get_decryption_information(self, cipher_hex: str, tag_size: int, iv_size: int) -> DecryptionInformation:
+        cipher: bytes = bytes.fromhex(cipher_hex)
+        iv_start = -(iv_size + SALT_SIZE)
+        tag_start = -(tag_size + iv_size + SALT_SIZE)
+
+        return { "encrypted_data": cipher[:tag_start], "tag": cipher[tag_start:tag_start + tag_size], "iv": cipher[iv_start:iv_start + iv_size], "salt": cipher[-SALT_SIZE:] }
 
     @abstractmethod
     def get_plain(self, password: str, cipher: str) -> str:
