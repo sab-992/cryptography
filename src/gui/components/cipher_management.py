@@ -23,6 +23,14 @@ class CipherManagementComponent(Component):
     def connect_to_signals(self) -> None:
         self.cipher_management_signals_s.connect("payload_prepared", self.on_payload_prepared)
 
+    def get_save_filters(self) -> str:
+        filters = ""
+
+        for file_strategies in FileStrategyFactory.file_strategies():
+            filters += f"{file_strategies.name} Files (*{file_strategies.extension});;"
+
+        return filters + "All Files (*)"
+
     def initialize_ui(self) -> None:
         SPACING = 10
         label_builder = (LabelBuilder().set_height(DIMENSION_UNIT_SIZE))
@@ -48,14 +56,14 @@ class CipherManagementComponent(Component):
 
     @Slot(str)
     def on_payload_prepared(self, payload: str) -> None:
-        file_path_info = QtWidgets.QFileDialog.getSaveFileName(self, "Save File", self.previous_save_path, f"Files: (*{" *".join(FileStrategyFactory.supported())});;All Files (*)")
+        file_path_info = QtWidgets.QFileDialog.getSaveFileName(self, "Save File", self.previous_save_path, self.get_save_filters())
 
-        if not file_path_info or self.path_is_empty(file_path_info[0]):
+        parent_folder = str(Path(file_path_info[0]).parent.resolve())
+        if not file_path_info or not FileSystem.path_exists(parent_folder):
             return
         
-        self.previous_save_path = str(Path(file_path_info[0]).parent.resolve())
-        
-        FileStrategyFactory.get(Path(file_path_info[0]).suffix).save(file_path_info[0], payload)
+        self.previous_upload_path = parent_folder
+        FileStrategyFactory.get(FileSystem.get_extension(file_path_info[0])).save(file_path_info[0], payload)
 
     @Slot()
     def on_save_btn_clicked(self) -> None:
@@ -65,18 +73,13 @@ class CipherManagementComponent(Component):
     def on_upload_btn_clicked(self) -> None:
         file_path_info = QtWidgets.QFileDialog.getOpenFileName(self, "Open File", self.previous_upload_path, f"Files: (*{" *".join(FileStrategyFactory.supported())})")
 
-        if not file_path_info or self.path_is_empty(file_path_info[0]):
+        if not file_path_info or not FileSystem.path_exists(file_path_info[0]):
             return
         
         self.previous_upload_path = str(Path(file_path_info[0]).parent.resolve())
-        
-        file = FileStrategyFactory.get(Path(file_path_info[0]).suffix).read(file_path_info[0])
-        if not file:
-            Logger.log(message="File is ill-formed. Make sure it is written correctly", level=Level_en.WARNING, to_std_out=True)
-        elif len(file) <= 0:
-            Logger.log(message="File is empty", level=Level_en.WARNING, to_std_out=True)
+        file = FileStrategyFactory.get(FileSystem.get_extension(file_path_info[0])).read(file_path_info[0])
+
+        if not file or len(file) <= 0:
+            Logger.log(message=f"Couldn't upload the file at: {file_path_info[0]}", level=Level_en.WARNING, to_std_out=True)
         else:
             self.cipher_management_signals_s.emit("cipher_text_overwrite_requested", file)
-
-    def path_is_empty(self, path: str):
-        return not path or len(path) <= 0

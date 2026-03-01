@@ -41,7 +41,7 @@ class PlainManagementComponent(Component):
     def on_upload_btn_clicked(self) -> None:
         file_path_info = QtWidgets.QFileDialog.getOpenFileName(self, "Open File", self.previous_upload_path, f"All Files (*)")
 
-        if not file_path_info or self.path_is_empty(file_path_info[0]):
+        if not file_path_info or not FileSystem.path_exists(file_path_info[0]):
             return
         
         self.previous_upload_path = str(Path(file_path_info[0]).parent.resolve())
@@ -49,12 +49,9 @@ class PlainManagementComponent(Component):
         try:
             file = FileSystem.read(file_path_info[0])
 
-            if len(file) <= 0:
-                Logger.log(message="File is empty", level=Level_en.WARNING, to_std_out=True)
+            if not file or len(file) <= 0:
+                raise Exception(Logger.log(message="File is empty", level=Level_en.WARNING, to_std_out=True))
 
             self.plain_management_signals_s.emit("plain_text_overwrite_requested", file)
-        except Exception as e:
-            Logger.log(message=e, level=Level_en.WARNING, to_std_out=True)
-
-    def path_is_empty(self, path: str):
-        return not path or len(path) <= 0
+        except Exception:
+            Logger.log(message=f"Could not upload file at: {file_path_info[0]}", level=Level_en.WARNING, to_std_out=True)

@@ -1,15 +1,16 @@
 from enum import Enum
 from src.utils.file_strategy.file_strategy import FileStrategy
-from src.utils.file_strategy.json import JsonFS
+from src.utils.file_strategy import json, text
 from src.utils.logger import Logger, Level_en
 from typing import Any, Type
 
 
 class FileStrategy_en(Enum):
-    JSON = JsonFS
+    TEXT = text.TextFS
+    JSON = json.JsonFS
 
 class FileStrategyFactory:
-    supported_strategies: dict[str, Type[FileStrategy]] = {  f".{str.lower(file_strategy.value.as_string())}": file_strategy.value for file_strategy in FileStrategy_en }
+    supported_strategies: dict[str, Type[FileStrategy]] = {  file_strategy.value.extension: file_strategy.value for file_strategy in FileStrategy_en }
 
     @classmethod
     def get(cls, strategy: Any) -> FileStrategy:
@@ -36,4 +37,8 @@ class FileStrategyFactory:
     @classmethod
     def supported(cls):
         return cls.supported_strategies.keys()
+
+    @staticmethod
+    def file_strategies() -> list[FileStrategy]:
+        return [file_strategy.value for file_strategy in FileStrategy_en]
             

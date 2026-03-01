@@ -15,6 +15,27 @@ class FileSystem():
         pass
 
     @staticmethod
+    def get_extension(path: str) -> str:
+        suffix = Path(path).suffix
+        return suffix if suffix and len(suffix) > 0 else Path(path).name
+
+    @staticmethod
+    def get_root() -> str:
+        current_path = Path.cwd()
+        root_name = ROOT_FOLDER_NAME
+
+        for parent in [current_path] + list(current_path.parents):
+            current_path = parent / root_name
+            if current_path.exists():
+                return str(current_path)
+            
+        raise Exception(Logger.log(message=f"Root folder not found", level=Level_en.ERROR))
+    
+    @staticmethod
+    def path_exists(path: str) -> bool:
+        return path and len(path) > 0 and os.path.exists(path)
+
+    @staticmethod
     def read(path: str) -> str:
         if(not os.path.exists(path)):
             raise Exception(Logger.log(message=f"File: '{path}' does not exist", level=Level_en.ERROR))
@@ -31,15 +52,3 @@ class FileSystem():
 
         with open(path, mode=mode.value) as f:
             f.write(content)
-
-    @staticmethod
-    def get_root() -> str:
-        current_path = Path.cwd()
-        root_name = ROOT_FOLDER_NAME
-
-        for parent in [current_path] + list(current_path.parents):
-            current_path = parent / root_name
-            if current_path.exists():
-                return str(current_path)
-            
-        raise Exception(Logger.log(message=f"Root folder not found", level=Level_en.ERROR))
